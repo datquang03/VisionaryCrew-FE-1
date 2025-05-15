@@ -10,6 +10,8 @@ import RegisterPage from "./pages/Register/RegisterPage";
 import ToastContainer from "./components/Toast/ToastContainer";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import UpdateProfilePage from "./pages/Profile/UpdateProfile/UpdateProfilePage";
+import { AdminProtectedRouter, ProtectedRouter } from "./middlewares/auth";
+import DashboardAdminPage from "./pages/Dashboard/DashboardPage";
 
 const App = () => {
   return (
@@ -23,9 +25,15 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/walkthrough" element={<WalkthroughPage />} />
         <Route path="/verify-email/:token" element={<EmailVerifyPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/update-profile" element={<UpdateProfilePage />} />
+
         <Route path="*" element={<NotFoundPage />} />
+        <Route element={<ProtectedRouter />}>
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/update-profile" element={<UpdateProfilePage />} />
+        </Route>
+        <Route element={<AdminProtectedRouter />}>
+          <Route path="/dashboard" element={<DashboardAdminPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

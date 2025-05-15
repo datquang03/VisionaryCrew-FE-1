@@ -5,7 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { PerspectiveCamera } from "@react-three/drei";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { motion, useAnimation } from "framer-motion";
-import DreamyCircles from "../../components/3D_Threejs/DreamyCircle"; // Import DreamyCircles
+import DreamyCircles from "../../components/3D_Threejs/DreamyCircle";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -32,61 +32,58 @@ const LoginPage = () => {
     reValidateMode: "onSubmit",
   });
 
-  // on submit
   const onSubmit = (data) => {
     dispatch(loginAction(data));
   };
 
-  // Reset userLogin state on mount to reflect the latest state
   useEffect(() => {
-    if (isError || !userInfo) {
+    return () => {
       dispatch({ type: "USER_LOGIN_RESET" });
-    }
-  }, [dispatch, isError, userInfo]);
+    };
+  }, [dispatch]);
 
-  // Handle form validation errors
   useEffect(() => {
     if (Object.keys(errors).length > 0 && isSubmitting) {
       showToast("Vui lòng kiểm tra thông tin đăng nhập!", "error");
     }
   }, [errors, isSubmitting]);
 
-  // Handle login success and error
   useEffect(() => {
     if (isSuccess && userInfo) {
-      dispatch({ type: "USER_LOGIN_RESET" });
+      console.log("Login success, userInfo:", userInfo);
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      showToast("Đăng nhập thành công!", "success");
       navigate("/profile");
+      setTimeout(() => {
+        dispatch({ type: "USER_LOGIN_RESET" });
+      }, 1000);
     }
     if (isError && message) {
       showToast(message, "error");
       dispatch({ type: "USER_LOGIN_RESET" });
     }
   }, [isSuccess, isError, message, navigate, dispatch, userInfo]);
-  // Seven colors for cycling
+
   const colors = [
-    "#FF0000", // Red
-    "#FFA500", // Orange
-    "#FFFF00", // Yellow
-    "#008000", // Green
-    "#0000FF", // Blue
-    "#4B0082", // Indigo
-    "#EE82EE", // Violet
+    "#FF0000",
+    "#FFA500",
+    "#FFFF00",
+    "#008000",
+    "#0000FF",
+    "#4B0082",
+    "#EE82EE",
   ];
 
-  // Function to cycle colors for "Visionary Crew"
   useEffect(() => {
     const interval = setInterval(() => {
       setColorIndex((prevIndex) => (prevIndex + 1) % colors.length);
-    }, 1000); // Change color every 1 second
+    }, 1000);
     return () => clearInterval(interval);
   }, [colors.length]);
 
-  // Sequence animations for login view
   useEffect(() => {
     const sequence = async () => {
-      // Wait for welcome text and book icon animations (1.5s total)
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      // Start login form animation
       await loginControls.start({
         y: 0,
         opacity: 1,
@@ -96,7 +93,6 @@ const LoginPage = () => {
     sequence();
   }, [loginControls]);
 
-  // Handle transition out before navigating to sign-up
   const handleSignUpClick = async () => {
     await loginControls.start({
       opacity: 0,
@@ -108,7 +104,6 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Dreamy Circles Canvas */}
       <div className="absolute inset-0 z-5">
         <Canvas>
           <PerspectiveCamera makeDefault position={[0, 0, 5]} />
@@ -117,13 +112,11 @@ const LoginPage = () => {
         </Canvas>
       </div>
 
-      {/* Login Content */}
       <motion.div
         className="w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-200 bg-opacity-50 relative"
         initial={{ opacity: 1, x: 0 }}
         animate={loginControls}
       >
-        {/* Welcome Text Animation */}
         <motion.div
           className="absolute left-10 top-1/4 text-4xl font-bold text-blue-900 w-1/4 z-10"
           initial={{ x: -200, opacity: 0 }}
@@ -142,7 +135,6 @@ const LoginPage = () => {
           </span>
         </motion.div>
 
-        {/* Custom Book Icon Animation */}
         <motion.div
           className="absolute right-10 top-1/4 z-10"
           initial={{ x: 200, opacity: 0, rotate: 0 }}
@@ -165,7 +157,6 @@ const LoginPage = () => {
           </svg>
         </motion.div>
 
-        {/* Login Form with Slide-Up Animation */}
         <motion.div
           className="w-96 p-8 bg-white rounded-lg shadow-lg relative z-10"
           initial={{ y: 300, opacity: 0 }}
@@ -227,7 +218,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className={`w-full bg-blue-600 text-white py-2 rounded-lg transition duration-300 cursor-pointer${
+                className={`w-full bg-blue-600 text-white py-2 rounded-lg transition duration-300 ${
                   isSubmitting || isLoading
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:bg-blue-700 cursor-pointer"
@@ -235,7 +226,7 @@ const LoginPage = () => {
               >
                 {isLoading ? (
                   <div className="w-full flex items-center justify-center">
-                    <ShortLoading text={"Đợi chút nha"} />
+                    <ShortLoading text="Đợi chút nha" />
                   </div>
                 ) : (
                   "Đăng Nhập"
@@ -280,7 +271,6 @@ const LoginPage = () => {
         </motion.div>
       </motion.div>
 
-      {/* Back to Home Button with Transition and Underline */}
       <motion.button
         className="absolute top-4 left-4 text-xl text-indigo-900 hover:translate-x-1 transition-transform duration-500 ease-in-out pt-4 hover:underline z-10 cursor-pointer"
         initial={{ opacity: 1, x: 0 }}
