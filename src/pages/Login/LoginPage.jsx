@@ -38,8 +38,10 @@ const LoginPage = () => {
 
   // Reset userLogin state on mount to reflect the latest state
   useEffect(() => {
+   if (isError || !userInfo) {
     dispatch({ type: "USER_LOGIN_RESET" });
-  }, [dispatch]);
+  }
+}, [dispatch, isError, userInfo]);
 
   // Handle form validation errors
   useEffect(() => {
@@ -49,17 +51,16 @@ const LoginPage = () => {
   }, [errors, isSubmitting]);
 
   // Handle login success and error
-  useEffect(() => {
-    if (isSuccess) {
-      dispatch({ type: "USER_LOGIN_RESET" });
-      navigate("/profile");
-    }
-    if (isError && message) {
-      showToast(message, "error");
-      dispatch({ type: "USER_LOGIN_RESET" });
-    }
-  }, [isSuccess, isError, message, navigate, dispatch]);
-
+useEffect(() => {
+  if (isSuccess && userInfo) {
+    dispatch({ type: "USER_LOGIN_RESET" });
+    navigate("/profile");
+  }
+  if (isError && message) {
+    showToast(message, "error");
+    dispatch({ type: "USER_LOGIN_RESET" });
+  }
+}, [isSuccess, isError, message, navigate, dispatch, userInfo]);
   // Seven colors for cycling
   const colors = [
     "#FF0000", // Red

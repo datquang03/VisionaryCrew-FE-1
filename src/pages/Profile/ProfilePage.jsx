@@ -7,10 +7,10 @@ import { useNavigate } from "react-router-dom";
 import userImage from "../../assets/defaultAvatar.png";
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { userInfo, isLoading, isError } = useSelector(
-    (state) => state.userLogin
-  );
-
+  const { isLoading, isError } = useSelector((state) => state.userLogin);
+  const userInfo = localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo"))
+    : null;
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
