@@ -90,14 +90,14 @@ const NotFoundPage = () => {
         </h1>
 
         <p className="text-2xl mt-4 mb-8 animate-fadeIn font-bold text-white">
-          Oops! Looks like you're lost in space.
+          Trang bạn đang tìm hiện không tồn tại
         </p>
 
         <button
           onClick={() => navigate("/")}
           className="px-6 py-3 bg-purple-600 text-white rounded-full shadow-lg scale-100 hover:scale-105 hover:bg-purple-700 transition-all duration-500 ease-in-out animate-bounceIn cursor-pointer"
         >
-          Back to Home
+          Về trang chủ
         </button>
       </div>
 

@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginValidation } from "../../components/Validate/user.validate";
 import { loginAction } from "../../../redux/actions/user.actions";
 import { showToast } from "../../utils/Toast";
+import ShortLoading from "../../components/Loading/ShortLoading";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -38,10 +39,10 @@ const LoginPage = () => {
 
   // Reset userLogin state on mount to reflect the latest state
   useEffect(() => {
-   if (isError || !userInfo) {
-    dispatch({ type: "USER_LOGIN_RESET" });
-  }
-}, [dispatch, isError, userInfo]);
+    if (isError || !userInfo) {
+      dispatch({ type: "USER_LOGIN_RESET" });
+    }
+  }, [dispatch, isError, userInfo]);
 
   // Handle form validation errors
   useEffect(() => {
@@ -51,16 +52,16 @@ const LoginPage = () => {
   }, [errors, isSubmitting]);
 
   // Handle login success and error
-useEffect(() => {
-  if (isSuccess && userInfo) {
-    dispatch({ type: "USER_LOGIN_RESET" });
-    navigate("/profile");
-  }
-  if (isError && message) {
-    showToast(message, "error");
-    dispatch({ type: "USER_LOGIN_RESET" });
-  }
-}, [isSuccess, isError, message, navigate, dispatch, userInfo]);
+  useEffect(() => {
+    if (isSuccess && userInfo) {
+      dispatch({ type: "USER_LOGIN_RESET" });
+      navigate("/profile");
+    }
+    if (isError && message) {
+      showToast(message, "error");
+      dispatch({ type: "USER_LOGIN_RESET" });
+    }
+  }, [isSuccess, isError, message, navigate, dispatch, userInfo]);
   // Seven colors for cycling
   const colors = [
     "#FF0000", // Red
@@ -226,13 +227,19 @@ useEffect(() => {
               <button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className={`w-full bg-blue-600 text-white py-2 rounded-lg transition duration-300 ${
+                className={`w-full bg-blue-600 text-white py-2 rounded-lg transition duration-300 cursor-pointer${
                   isSubmitting || isLoading
                     ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-blue-700"
+                    : "hover:bg-blue-700 cursor-pointer"
                 }`}
               >
-                {isLoading ? "Đang đăng nhập..." : "Đăng Nhập"}
+                {isLoading ? (
+                  <div className="w-full flex items-center justify-center">
+                    <ShortLoading text={"Đợi chút nha"} />
+                  </div>
+                ) : (
+                  "Đăng Nhập"
+                )}
               </button>
               <button
                 type="button"
@@ -275,7 +282,7 @@ useEffect(() => {
 
       {/* Back to Home Button with Transition and Underline */}
       <motion.button
-        className="absolute top-4 left-4 text-xl text-indigo-900 cursor-pointer hover:translate-x-1 transition-transform duration-500 ease-in-out pt-4 hover:underline z-10"
+        className="absolute top-4 left-4 text-xl text-indigo-900 hover:translate-x-1 transition-transform duration-500 ease-in-out pt-4 hover:underline z-10 cursor-pointer"
         initial={{ opacity: 1, x: 0 }}
         animate={loginControls}
       >

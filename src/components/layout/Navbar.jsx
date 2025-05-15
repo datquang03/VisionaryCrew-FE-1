@@ -95,7 +95,10 @@ const Navbar = () => {
                   className="size-10 rounded-full object-cover border-2 border-indigo-300 hover:border-indigo-500 transition-colors duration-200"
                 />
               ) : (
-                <div className="flex items-center space-x-1">
+                <div
+                  className="flex items-center space-x-1"
+                  onClick={() => navigate("/login")}
+                >
                   <FiUser className="text-xl" />
                   <span className="font-medium">Login</span>
                 </div>
