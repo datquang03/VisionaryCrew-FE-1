@@ -10,8 +10,13 @@ import RegisterPage from "./pages/Register/RegisterPage";
 import ToastContainer from "./components/Toast/ToastContainer";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import UpdateProfilePage from "./pages/Profile/UpdateProfile/UpdateProfilePage";
-import { AdminProtectedRouter, ProtectedRouter } from "./middlewares/auth";
+import {
+  AdminProtectedRouter,
+  DoctorProtectedRouter,
+  ProtectedRouter,
+} from "./middlewares/auth";
 import DashboardAdminPage from "./pages/Dashboard/DashboardPage";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 const App = () => {
   return (
@@ -31,8 +36,11 @@ const App = () => {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/update-profile" element={<UpdateProfilePage />} />
         </Route>
+        <Route element={<DoctorProtectedRouter />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
         <Route element={<AdminProtectedRouter />}>
-          <Route path="/dashboard" element={<DashboardAdminPage />} />
+          <Route path="/dashboard/admin" element={<DashboardAdminPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

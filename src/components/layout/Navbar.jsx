@@ -18,14 +18,19 @@ const Navbar = () => {
   const isAdminOrDoctor =
     memoizedUserInfo?.role === "admin" || memoizedUserInfo?.role === "doctor";
 
-  // Dropdown menu items based on role
-  const menuItems = [
-    ...(isAdminOrDoctor ? [{ label: "Dashboard", path: "/dashboard" }] : []),
-    { label: "Profile", path: "/profile" },
-    { label: "Settings", path: "/settings" },
-    { label: "Logout", path: "/logout" },
-  ];
-
+  // Set dashboard path based on role
+  const dashboardPath =
+    memoizedUserInfo?.role === "admin" ? "/dashboard/admin" : "/dashboard";
+  // Define dropdown menu items
+  const menuItems = useMemo(
+    () => [
+      ...(isAdminOrDoctor ? [{ label: "Dashboard", path: dashboardPath }] : []),
+      { label: "Profile", path: "/profile" },
+      { label: "Settings", path: "/settings" },
+      { label: "Logout", path: "/logout" },
+    ],
+    [isAdminOrDoctor, dashboardPath]
+  );
   // Handle logout (example implementation, adjust as needed)
   const handleLogout = () => {
     // Clear user info from localStorage or Redux (implement your logout logic)

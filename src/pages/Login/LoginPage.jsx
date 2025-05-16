@@ -50,7 +50,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isSuccess && userInfo) {
-      console.log("Login success, userInfo:", userInfo);
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
       showToast("Đăng nhập thành công!", "success");
       navigate("/profile");
