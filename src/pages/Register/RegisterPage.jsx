@@ -14,6 +14,7 @@ import DateOfBirthSelect from "../../components/DateFormat/DateOfBirthSelect";
 import { RegisterValidation } from "../../components/Validate/user.validate";
 import { registerAction } from "../../../redux/actions/user.actions";
 import { showToast } from "../../utils/Toast.jsx";
+import ShortLoading from "../../components/Loading/ShortLoading.jsx";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -222,7 +223,7 @@ const RegisterPage = () => {
               disabled={isLoading || isSubmitting}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 cursor-pointer disabled:opacity-50"
             >
-              {isLoading || isSubmitting ? "Đợi chút nha" : "Đăng kí"}
+              {isLoading || isSubmitting ?  <ShortLoading text="Đợi chút nha" /> : "Đăng kí"}
             </button>
           </div>
           <p className="mt-4 text-center text-gray-600">

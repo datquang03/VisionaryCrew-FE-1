@@ -151,14 +151,15 @@ const UpdateProfilePage = () => {
                 className="flex flex-col"
               >
                 <label className="text-cyan-300 font-semibold mb-1">
-                  Tên người dùng:
+                  Tên tài khoản:
                 </label>
                 <input
+                  disabled
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  className="bg-cyan-500/10 text-cyan-100 p-3 rounded-lg border border-cyan-400/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  className="bg-cyan-500/1 text-cyan-100 p-3 rounded-lg border border-cyan-400/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                   placeholder="Nhập tên người dùng"
                 />
               </motion.div>

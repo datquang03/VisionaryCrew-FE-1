@@ -10,7 +10,9 @@ import userImage from "../../assets/defaultAvatar.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { userInfo } = useSelector((state) => state.userLogin);
+    const userInfo = localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo"))
+    : null;
   const memoizedUserInfo = useMemo(() => userInfo, [userInfo]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -50,7 +52,6 @@ const Navbar = () => {
     }
     setIsDropdownOpen(!isDropdownOpen);
   };
-
   return (
     <div className="w-full h-20 flex items-center justify-center">
       <div className="w-full h-14 bg-gray-200 rounded-lg flex justify-between items-center px-6">

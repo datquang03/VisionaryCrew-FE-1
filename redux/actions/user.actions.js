@@ -10,7 +10,6 @@ export const loginAction = (data) => async (dispatch) => {
     dispatch({ type: "USER_LOGIN_SUCCESS", payload: response });
     saveUserInfo(response);
     localStorage.setItem("userInfo", JSON.stringify(response));
-    showToast("Đăng nhập thành công!", "success");
   } catch (error) {
     ErrorsAction(error, dispatch, "USER_LOGIN_FAIL");
     const message = error.response?.data?.message || "Đăng nhập thất bại!";
