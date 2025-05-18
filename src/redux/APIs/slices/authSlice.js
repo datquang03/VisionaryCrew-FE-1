@@ -10,7 +10,7 @@ import { handleDangNhap } from "../axios";
 export const login = createAsyncThunk("Account/login", async (values) => {
   try {
     const res = await postRequest("users/login", values);
-    return res.data;
+    return res;
   } catch (error) {
     return error;
   }
@@ -22,7 +22,7 @@ export const registerAcc = createAsyncThunk(
     try {
       const response = await postRequestFormData("users/register", payload);
 
-      return response.data;
+      return response;
     } catch (error) {
       console.error(
         error.response.data.message || "An error occurred during registration."
@@ -37,7 +37,7 @@ export const updateProfile = createAsyncThunk(
   async (values) => {
     try {
       const res = await patchRequest("users/profile", values);
-      return res.data;
+      return res;
     } catch (error) {
       return error;
     }
@@ -45,7 +45,7 @@ export const updateProfile = createAsyncThunk(
 );
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: null,
   isLoading: false,
   isSuccess: false,
   isError: null,
@@ -57,21 +57,17 @@ const authSlice = createSlice({
   name: "authSlice",
   initialState,
   reducers: {
-    // logout(state) {
-    //   state.token = null;
-    //   notification.success({
-    //     message: "Logged out successfully",
-    //   });
-    // },
     logout(state) {
-      state.token = null;
+      localStorage.removeItem("userInfo");
       state.user = null;
-      state.role = null;
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("role");
+      state.isSuccess = false;
+      state.isLoading = false;
+      state.isError = false;
+      state.message = null;
     },
+    setNull(state){
+      state.isSuccess = false;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -81,25 +77,24 @@ const authSlice = createSlice({
         state.isError = false;
       })
       .addCase(login.fulfilled, (state, action) => {
-        if (action.payload.token) {
-          handleDangNhap(action.payload);
-          localStorage.setItem("userInfo", JSON.stringify(action.payload));
+        if (action.payload.status === 200 || action.payload.status === 201) {
+          handleDangNhap(action.payload.data);
+          localStorage.setItem("userInfo", JSON.stringify(action.payload.data));
           state.isSuccess = true;
           state.isLoading = false;
           state.isError = false;
-        } else if (action.payload.message) {
-          state.message = action.payload.message;
+        } else {
+          state.message = action.payload.response.data.message;
           state.isSuccess = false;
           state.isLoading = false;
           state.isError = true;
         }
       })
       // Rejected state
-      .addCase(login.rejected, (state, action) => {
+      .addCase(login.rejected, (state) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
-        console.log(action.payload);
       })
       .addCase(registerAcc.pending, (state) => {
         state.isLoading = true;
@@ -115,21 +110,29 @@ const authSlice = createSlice({
 
       .addCase(updateProfile.pending, (state) => {
         state.isLoading = true;
-        state.isSuccess = false
+        state.isSuccess = false;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true
-        state.updatedUser = action.payload;
+        if (action.payload.status === 200 || action.payload.status === 201) {
+          state.isLoading = false;
+          state.isSuccess = true;
+          state.updatedUser = action.payload.data.user;
+          state.message = action.payload.data.message;
+        } else {
+          state.isLoading = false;
+          state.isSuccess = false;
+          state.isError = true;
+          state.message = action.payload.response.data.message;
+        }
       })
       .addCase(updateProfile.rejected, (state) => {
         state.isLoading = false;
-        state.isSuccess = false
+        state.isSuccess = false;
         state.isError = true;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setNull } = authSlice.actions;
 
 export default authSlice;

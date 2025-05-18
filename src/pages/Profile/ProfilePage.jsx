@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import userImage from "../../assets/defaultAvatar.png";
+import { setNull } from "../../redux/APIs/slices/authSlice";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -43,6 +44,10 @@ const ProfilePage = () => {
   const formattedDateOfBirth = userInfo?.dateOfBirth
     ? moment(userInfo.dateOfBirth).format("DD-MM-YYYY")
     : "N/A";
+
+    useEffect(()=>{
+      setNull()
+    },[])
 
   return (
     <div className="min-h-screen max-h-screen custom-scrollbar bg-gradient-to-br from-gray-900 via-indigo-900 to-blue-900 p-6 flex items-center justify-center">

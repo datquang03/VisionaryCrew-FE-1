@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import userImage from "../../assets/defaultAvatar.png";
+import { logout } from "../../redux/APIs/slices/authSlice";
+import { showToast } from "../../utils/Toast";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -35,10 +37,10 @@ const Navbar = () => {
   );
   // Handle logout (example implementation, adjust as needed)
   const handleLogout = () => {
-    // Clear user info from localStorage or Redux (implement your logout logic)
-    localStorage.removeItem("userInfo");
+    logout()
+    showToast("Đăng xuất thành công", "success");
     navigate("/login");
-    setIsDropdownOpen(false); // Close dropdown after logout
+    setIsDropdownOpen(false); 
   };
 
   // Handle navigation and dropdown toggle

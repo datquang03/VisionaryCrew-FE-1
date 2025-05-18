@@ -32,7 +32,7 @@ const AdminProtectedRouter = () => {
   );
 };
 const DoctorProtectedRouter = () => {
-  const { userInfo } = useSelector((state) => state.userLogin);
+  const { userInfo } = useSelector((state) => state.authSlice);
   const localUserInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;

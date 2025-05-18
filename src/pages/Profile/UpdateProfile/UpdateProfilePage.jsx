@@ -11,7 +11,7 @@ import { showToast } from "../../../utils/Toast";
 const UpdateProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { updatedUser, isSuccess, isLoading, isError } = useSelector(
+  const { updatedUser, isSuccess, isLoading, isError, message } = useSelector(
     (state) => state.authSlice
   );
   const userInfo = localStorage.getItem("userInfo")
@@ -78,8 +78,8 @@ const UpdateProfilePage = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && updatedUser.user && updatedUserState) {
-      showToast(updatedUser.message, "success");
+    if (isSuccess && updatedUser && updatedUserState) {
+      showToast(message, "success");
       userInfo.dateOfBirth = updatedUserState.dateOfBirth;
       userInfo.email = updatedUserState.email;
       userInfo.phone = updatedUserState.phone;
@@ -88,7 +88,7 @@ const UpdateProfilePage = () => {
       navigate("/profile");
     }
     if (isError) {
-      showToast(updatedUser.message, "error");
+      showToast(message, "error");
     }
   }, [isSuccess, isError, navigate, dispatch]);
 
@@ -105,16 +105,7 @@ const UpdateProfilePage = () => {
           >
             Đang tải thông tin...
           </motion.div>
-        ) : isError ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-red-400 text-xl"
-          >
-            Lỗi khi tải thông tin người dùng.
-          </motion.div>
-        ) : userInfo ? (
+        ) :  userInfo ? (
           <motion.div
             variants={cardVariants}
             initial="hidden"

@@ -7,7 +7,7 @@ const getRequest = async (url) => {
     const res = await axiosClient.get(`${url}`);
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -17,7 +17,7 @@ const getRequestParams = async (url, params) => {
     const res = await axiosClient.get(`${url}`, { params: params });
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -30,7 +30,7 @@ const postRequestParams = async (url, params) => {
     const res = await axiosClient.post(fullUrl, null);
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -40,7 +40,7 @@ const postRequest = async (url, payload) => {
     const res = await axiosClient.post(`${url}`, payload);
     return res;
   } catch (error) {
-    return error.response;
+    return error;
   }
 };
 const postRequestMultipartFormData = async (url, payload) => {
@@ -54,7 +54,7 @@ const postRequestMultipartFormData = async (url, payload) => {
     });
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 // [POST] -> multipart/form-data (file, ...)
@@ -67,7 +67,7 @@ const postRequestFormData = async (url, payload) => {
     });
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -77,7 +77,7 @@ const deleteRequest = async (url, payload) => {
     const res = await axiosClient.delete(`${url}`, payload);
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -87,7 +87,7 @@ const putRequest = async (url, payload) => {
     const res = await axiosClient.put(`${url}`, payload);
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -101,7 +101,7 @@ const putRequestParams = async (url, params) => {
     const res = await axiosClient.put(fullUrl, null);
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 
@@ -115,7 +115,7 @@ const putRequestFormData = async (url, payload) => {
     });
     return res;
   } catch (error) {
-    return console.log(error);
+    return error;
   }
 };
 // [PATCH]
@@ -124,7 +124,7 @@ const patchRequest = async (url, payload) => {
     const res = await axiosClient.patch(`${url}`, payload);
     return res;
   } catch (error) {
-    return error.response;
+    return error;
   }
 };
 
