@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import Navbar from "../../components/layout/Navbar";
+import Navbar from "../../components/layout/Navbar/Navbar";
 import IntroSection from "./IntroSection";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
