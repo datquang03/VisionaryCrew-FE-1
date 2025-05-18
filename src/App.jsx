@@ -19,6 +19,7 @@ import DashboardAdminPage from "./pages/Dashboard/DashboardPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BlogPage from "./pages/Blog/BlogPage";
 import BlogDetailPage from "./pages/Blog/BlogDetailPage";
+import EmailUpdateVerify from "./pages/Profile/UpdateProfile/EmailUpdateVerify";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
         <Route element={<ProtectedRouter />}>
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/update-profile" element={<UpdateProfilePage />} />
+          <Route path="/update-email/code" element={<EmailUpdateVerify />} />
         </Route>
         <Route element={<DoctorProtectedRouter />}>
           <Route path="/dashboard" element={<Dashboard />} />
