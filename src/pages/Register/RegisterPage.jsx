@@ -14,14 +14,14 @@ import DateOfBirthSelect from "../../components/DateFormat/DateOfBirthSelect";
 import { RegisterValidation } from "../../components/Validate/user.validate";
 import { showToast } from "../../utils/Toast.jsx";
 import ShortLoading from "../../components/Loading/ShortLoading.jsx";
-import { registerAcc } from "../../redux/APIs/slices/authSlice.js";
+import { registerAcc, setNull } from "../../redux/APIs/slices/authSlice.js";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const formControls = useAnimation();
   const backButtonControls = useAnimation();
   const dispatch = useDispatch();
-  const { isLoading, isError, message, isSuccess } = useSelector(
+  const { isLoading, isError, message, isSuccessReg } = useSelector(
     (state) => state.authSlice
   );
   const [showPassword, setShowPassword] = React.useState(false);
@@ -41,11 +41,12 @@ const RegisterPage = () => {
 
   const onSubmit = (data) => {
     const { birthDay, birthMonth, birthYear, ...rest } = data;
-    console.log(data)
+    console.log(data);
     const birthDate = `${String(birthDay).padStart(2, "0")}-${String(
       birthMonth
     ).padStart(2, "0")}-${birthYear}`;
     const payload = { ...rest, dateOfBirth: birthDate };
+    console.log(payload);
     setHasSubmitted(true);
     dispatch(registerAcc(payload));
   };
@@ -81,17 +82,18 @@ const RegisterPage = () => {
   }, [formControls]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccessReg) {
       console.log("Registration Successful:", message);
       localStorage.removeItem("userInfo");
-      dispatch({ type: "USER_REGISTER_RESET" });
+      showToast(message, "success");
+      dispatch(setNull());
       navigate("/login");
     }
     if (isError) {
-      // Remove showToast here; ErrorsAction handles it
-      dispatch({ type: "USER_REGISTER_RESET" });
+      dispatch(setNull());
+      showToast(message, "error");
     }
-  }, [isSuccess, isError, message, navigate, dispatch]);
+  }, [isSuccessReg, isError, message, navigate, dispatch]);
 
   return (
     <div className="h-screen fixed inset-0 overflow-hidden flex flex-col">
@@ -224,7 +226,11 @@ const RegisterPage = () => {
               disabled={isLoading || isSubmitting}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 cursor-pointer disabled:opacity-50"
             >
-              {isLoading || isSubmitting ?  <ShortLoading text="Đợi chút nha" /> : "Đăng kí"}
+              {isLoading || isSubmitting ? (
+                <ShortLoading text="Đợi chút nha" />
+              ) : (
+                "Đăng kí"
+              )}
             </button>
           </div>
           <p className="mt-4 text-center text-gray-600">

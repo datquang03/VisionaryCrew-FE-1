@@ -2,11 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   patchRequest,
   postRequest,
-  postRequestFormData,
 } from "../../../services/httpMethods";
 import { handleDangNhap } from "../axios";
 
-// Define the async thunk for login
+
 export const login = createAsyncThunk("Account/login", async (values) => {
   try {
     const res = await postRequest("users/login", values);
@@ -18,16 +17,13 @@ export const login = createAsyncThunk("Account/login", async (values) => {
 
 export const registerAcc = createAsyncThunk(
   "Account/registerAcc",
-  async (payload, { rejectWithValue }) => {
+  async (payload) => {
     try {
-      const response = await postRequestFormData("users/register", payload);
+      const response = await postRequest("users/register", payload);
 
       return response;
     } catch (error) {
-      console.error(
-        error.response.data.message || "An error occurred during registration."
-      );
-      return rejectWithValue(error.response || error.response.data.message);
+      return error;
     }
   }
 );
@@ -51,6 +47,7 @@ const initialState = {
   isError: null,
   message: null,
   updatedUser: null,
+  isSuccessReg:false
 };
 
 const authSlice = createSlice({
@@ -67,6 +64,7 @@ const authSlice = createSlice({
     },
     setNull(state) {
       state.isSuccess = false;
+      state.isSuccessReg = false
     },
   },
   extraReducers: (builder) => {
@@ -90,7 +88,6 @@ const authSlice = createSlice({
           state.isError = true;
         }
       })
-      // Rejected state
       .addCase(login.rejected, (state) => {
         state.isLoading = false;
         state.isSuccess = false;
@@ -98,14 +95,26 @@ const authSlice = createSlice({
       })
       .addCase(registerAcc.pending, (state) => {
         state.isLoading = true;
+        state.isSuccessReg = false;
+        state.isError = false;
       })
       .addCase(registerAcc.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload;
+        if (action.payload.status === 200 || action.payload.status === 201) {
+          state.isSuccessReg = true;
+          state.isLoading = false;
+          state.isError = false;
+          state.message = action.payload.data.message;
+        } else {
+          state.message = action.payload.response.data.message;
+          state.isSuccessReg = false;
+          state.isLoading = false;
+          state.isError = true;
+        }
       })
-      .addCase(registerAcc.rejected, (state, action) => {
+      .addCase(registerAcc.rejected, (state) => {
         state.isLoading = false;
-        state.isError = action.payload || "Registration failed";
+        state.isSuccessReg = false;
+        state.isError = true;
       })
 
       .addCase(updateProfile.pending, (state) => {

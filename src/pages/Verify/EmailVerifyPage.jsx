@@ -11,19 +11,12 @@ const VerifyEmail = () => {
   const hasVerified = useRef(false);
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const email = query.get("email");
-
-    if (token && email && !hasVerified.current) {
-      hasVerified.current = true; // Prevent duplicate requests
-      console.log("Sending verification request:", { token, email }); // Debug log
+    if (token && !hasVerified.current) {
+      hasVerified.current = true;
       setIsLoading(true);
       axios
-        .get(`http://localhost:8000/api/users/verify-email/${token}`, {
-          params: { email },
-        })
+        .get(`http://localhost:8000/api/users/verify-email/${token}`)
         .then((response) => {
-          console.log("Verification success:", response.data); // Debug log
           showToast(response.data.message, "success");
           navigate("/login");
         })
@@ -36,12 +29,12 @@ const VerifyEmail = () => {
         .finally(() => {
           setIsLoading(false);
         });
-    } else if (!token || !email) {
+    } else if (!token) {
       showToast("Mã xác thực hoặc email không hợp lệ", "error");
       navigate("/login");
       setIsLoading(false);
     }
-  }, [token, navigate, location]); // Include email in dependencies
+  }, [token, navigate, location]);
 
   return (
     <div>
