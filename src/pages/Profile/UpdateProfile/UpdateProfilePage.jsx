@@ -1,20 +1,23 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import userImage from "../../../assets/defaultAvatar.png";
 import { updateProfile } from "../../../redux/APIs/slices/authSlice";
+import { showToast } from "../../../utils/Toast";
 
 const UpdateProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, isError } = useSelector((state) => state.authSlice);
+  const { updatedUser, isSuccess, isLoading, isError } = useSelector(
+    (state) => state.authSlice
+  );
   const userInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;
-
+  const [updatedUserState, setUpdatedUserState] = useState(null);
   const [formData, setFormData] = useState({
     username: userInfo?.username || "",
     email: userInfo?.email || "",
@@ -60,7 +63,6 @@ const UpdateProfilePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    // formData.dateOfBirth = moment(formData.dateOfBirth).format("DD-MM-YYYY");
     const dateOfBirth = formData.dateOfBirth;
     const email = formData.email;
     const phone = formData.phone;
@@ -71,8 +73,25 @@ const UpdateProfilePage = () => {
       phone,
       description,
     };
-    dispatch(updateProfile(value))
+    setUpdatedUserState(value);
+    dispatch(updateProfile(value));
   };
+
+  useEffect(() => {
+    if (isSuccess && updatedUser.user && updatedUserState) {
+      showToast(updatedUser.message, "success");
+      userInfo.dateOfBirth = updatedUserState.dateOfBirth;
+      userInfo.email = updatedUserState.email;
+      userInfo.phone = updatedUserState.phone;
+      userInfo.description = updatedUserState.description;
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      navigate("/profile");
+    }
+    if (isError) {
+      showToast(updatedUser.message, "error");
+    }
+  }, [isSuccess, isError, navigate, dispatch]);
+
 
   return (
     <div className="min-h-screen max-h-screen custom-scrollbar bg-gradient-to-br from-gray-900 via-teal-900 to-cyan-900 p-6 flex items-center justify-center">

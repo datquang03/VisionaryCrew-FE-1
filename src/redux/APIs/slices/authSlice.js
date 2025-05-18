@@ -32,14 +32,17 @@ export const registerAcc = createAsyncThunk(
   }
 );
 
-export const updateProfile = createAsyncThunk("Account/updateProfile", async (values) => {
-  try {
-    const res = await patchRequest("users/profile", values);
-    return res.data;
-  } catch (error) {
-    return error;
+export const updateProfile = createAsyncThunk(
+  "Account/updateProfile",
+  async (values) => {
+    try {
+      const res = await patchRequest("users/profile", values);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
   }
-});
+);
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -47,6 +50,7 @@ const initialState = {
   isSuccess: false,
   isError: null,
   message: null,
+  updatedUser: null,
 };
 
 const authSlice = createSlice({
@@ -97,19 +101,31 @@ const authSlice = createSlice({
         state.isError = true;
         console.log(action.payload);
       })
-      // Register
       .addCase(registerAcc.pending, (state) => {
         state.isLoading = true;
       })
-      // Fulfilled state
       .addCase(registerAcc.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
       })
-      // Rejected state
       .addCase(registerAcc.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = action.payload || "Registration failed";
+      })
+
+      .addCase(updateProfile.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccess = false
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true
+        state.updatedUser = action.payload;
+      })
+      .addCase(updateProfile.rejected, (state) => {
+        state.isLoading = false;
+        state.isSuccess = false
+        state.isError = true;
       });
   },
 });
