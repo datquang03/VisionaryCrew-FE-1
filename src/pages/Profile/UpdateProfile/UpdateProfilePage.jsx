@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import userImage from "../../../assets/defaultAvatar.png";
+import { updateProfile } from "../../../redux/APIs/slices/authSlice";
 
 const UpdateProfilePage = () => {
   const navigate = useNavigate();
-  const { isLoading, isError } = useSelector((state) => state.userLogin);
+  const dispatch = useDispatch();
+  const { isLoading, isError } = useSelector((state) => state.authSlice);
   const userInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;
@@ -57,11 +59,19 @@ const UpdateProfilePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add logic to dispatch update action (e.g., updateProfileAction) with formData
     console.log("Form submitted:", formData);
-    // Example: dispatch(updateProfileAction(formData));
-    // On success, navigate back to profile page
-    navigate("/profile");
+    // formData.dateOfBirth = moment(formData.dateOfBirth).format("DD-MM-YYYY");
+    const dateOfBirth = formData.dateOfBirth;
+    const email = formData.email;
+    const phone = formData.phone;
+    const description = formData.description;
+    const value = {
+      dateOfBirth,
+      email,
+      phone,
+      description,
+    };
+    dispatch(updateProfile(value))
   };
 
   return (

@@ -10,17 +10,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginValidation } from "../../components/Validate/user.validate";
-import { loginAction } from "../../../redux/actions/user.actions";
 import { showToast } from "../../utils/Toast";
 import ShortLoading from "../../components/Loading/ShortLoading";
+import { login } from "../../redux/APIs/slices/authSlice";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const loginControls = useAnimation();
   const [colorIndex, setColorIndex] = useState(0);
   const dispatch = useDispatch();
-  const { isLoading, isError, userInfo, isSuccess, message } = useSelector(
-    (state) => state.userLogin
+  const { isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.authSlice
   );
   const {
     register,
@@ -33,7 +33,7 @@ const LoginPage = () => {
   });
 
   const onSubmit = (data) => {
-    dispatch(loginAction(data));
+    dispatch(login(data));
   };
 
   useEffect(() => {
@@ -49,19 +49,14 @@ const LoginPage = () => {
   }, [errors, isSubmitting]);
 
   useEffect(() => {
-    if (isSuccess && userInfo) {
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    if (isSuccess) {
       showToast("Đăng nhập thành công!", "success");
       navigate("/profile");
-      setTimeout(() => {
-        dispatch({ type: "USER_LOGIN_RESET" });
-      }, 1000);
     }
     if (isError && message) {
       showToast(message, "error");
-      dispatch({ type: "USER_LOGIN_RESET" });
     }
-  }, [isSuccess, isError, message, navigate, dispatch, userInfo]);
+  }, [isSuccess, isError, message, navigate, dispatch]);
 
   const colors = [
     "#FF0000",

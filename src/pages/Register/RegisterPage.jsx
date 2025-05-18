@@ -12,9 +12,9 @@ import { PerspectiveCamera } from "@react-three/drei";
 import DreamyCircles from "../../components/3D_Threejs/DreamyCircle";
 import DateOfBirthSelect from "../../components/DateFormat/DateOfBirthSelect";
 import { RegisterValidation } from "../../components/Validate/user.validate";
-import { registerAction } from "../../../redux/actions/user.actions";
 import { showToast } from "../../utils/Toast.jsx";
 import ShortLoading from "../../components/Loading/ShortLoading.jsx";
+import { registerAcc } from "../../redux/APIs/slices/authSlice.js";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const RegisterPage = () => {
   const backButtonControls = useAnimation();
   const dispatch = useDispatch();
   const { isLoading, isError, message, isSuccess } = useSelector(
-    (state) => state.userRegister
+    (state) => state.authSlice
   );
   const [showPassword, setShowPassword] = React.useState(false);
   const [hasSubmitted, setHasSubmitted] = React.useState(false);
@@ -41,12 +41,13 @@ const RegisterPage = () => {
 
   const onSubmit = (data) => {
     const { birthDay, birthMonth, birthYear, ...rest } = data;
+    console.log(data)
     const birthDate = `${String(birthDay).padStart(2, "0")}-${String(
       birthMonth
     ).padStart(2, "0")}-${birthYear}`;
     const payload = { ...rest, dateOfBirth: birthDate };
     setHasSubmitted(true);
-    dispatch(registerAction(payload));
+    dispatch(registerAcc(payload));
   };
 
   useEffect(() => {

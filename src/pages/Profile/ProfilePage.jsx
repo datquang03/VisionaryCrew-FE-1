@@ -8,7 +8,7 @@ import userImage from "../../assets/defaultAvatar.png";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { isLoading, isError } = useSelector((state) => state.userLogin);
+  const { isLoading, isError } = useSelector((state) => state.authSlice);
   const userInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;
