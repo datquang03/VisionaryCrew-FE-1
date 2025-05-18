@@ -45,9 +45,7 @@ const ProfilePage = () => {
     ? moment(userInfo.dateOfBirth).format("DD-MM-YYYY")
     : "N/A";
 
-    useEffect(()=>{
-      setNull()
-    },[])
+
 
   return (
     <div className="min-h-screen max-h-screen custom-scrollbar bg-gradient-to-br from-gray-900 via-indigo-900 to-blue-900 p-6 flex items-center justify-center">

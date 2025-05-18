@@ -1,18 +1,20 @@
 /* eslint-disable no-unused-vars */
 import { IoIosSearch } from "react-icons/io";
 import { FiTag, FiShoppingCart, FiUser } from "react-icons/fi";
-import logo from "../../assets/VisionaryCrew.png";
+import logo from "../../../assets/VisionaryCrew.png";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import userImage from "../../assets/defaultAvatar.png";
-import { logout } from "../../redux/APIs/slices/authSlice";
-import { showToast } from "../../utils/Toast";
+import userImage from "../../../assets/defaultAvatar.png";
+import { logout } from "../../../redux/APIs/slices/authSlice";
+import { showToast } from "../../../utils/Toast";
+import { useDispatch } from "react-redux";
+
 
 const Navbar = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
-    const userInfo = localStorage.getItem("userInfo")
+  const userInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;
   const memoizedUserInfo = useMemo(() => userInfo, [userInfo]);
@@ -37,7 +39,7 @@ const Navbar = () => {
   );
   // Handle logout (example implementation, adjust as needed)
   const handleLogout = () => {
-    logout()
+    dispatch(logout());
     showToast("Đăng xuất thành công", "success");
     navigate("/login");
     setIsDropdownOpen(false); 
@@ -59,7 +61,12 @@ const Navbar = () => {
       <div className="w-full h-14 bg-gray-200 rounded-lg flex justify-between items-center px-6">
         {/* Left side: Logo + Search */}
         <div className="flex items-center">
-          <img src={logo} className="h-10 object-contain" alt="logo" />
+          <img
+            src={logo}
+            className="h-10 object-contain cursor-pointer"
+            alt="logo"
+            onClick={() => navigate("/")}
+          />
           <div className="ml-4 border-l-2 border-gray-400 h-8"></div>
           <div className="ml-20">
             <div className="flex items-center bg-white rounded-full shadow-md w-80 h-10 overflow-hidden">

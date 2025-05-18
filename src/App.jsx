@@ -17,6 +17,8 @@ import {
 } from "./middlewares/auth";
 import DashboardAdminPage from "./pages/Dashboard/DashboardPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import BlogPage from "./pages/Blog/BlogPage";
+import BlogDetailPage from "./pages/Blog/BlogDetailPage";
 
 const App = () => {
   return (
@@ -30,6 +32,8 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/walkthrough" element={<WalkthroughPage />} />
         <Route path="/verify-email/:token" element={<EmailVerifyPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:id" element={<BlogDetailPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
         <Route element={<ProtectedRouter />}>
