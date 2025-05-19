@@ -20,6 +20,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import BlogPage from "./pages/Blog/BlogPage";
 import BlogDetailPage from "./pages/Blog/BlogDetailPage";
 import EmailUpdateVerify from "./pages/Profile/UpdateProfile/EmailUpdateVerify";
+import CartPage from "./pages/Cart/CartPage";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/verify-email/:token" element={<EmailVerifyPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
+        <Route path="/cart" element={<CartPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
         <Route element={<ProtectedRouter />}>

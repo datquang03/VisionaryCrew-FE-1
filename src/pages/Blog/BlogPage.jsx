@@ -6,6 +6,7 @@ import blogImage from "../../assets/blog.avif";
 import { useNavigate } from "react-router-dom";
 import StarryBackground from "../../components/3D_Threejs/StarryBackground";
 import StickyNavbar from "../../components/layout/Navbar/StickyNavbar";
+import ThreeDButton from "../../components/3D_Threejs/3DButton";
 
 const BlogPage = () => {
   const blogRefs = useRef([]);
@@ -84,10 +85,12 @@ const BlogPage = () => {
                   </span>
                 </div>
                 <a
-                  className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  className="inline-block text-white px-4 py-2 rounded-md "
                   onClick={() => navigate(`/blog/${blog._id}`)}
                 >
-                  Read More
+                  <ThreeDButton onClick={() => navigate(`/blog/${blog._id}`)} className="text-sm">
+                  Đọc Tiếp
+                  </ThreeDButton>
                 </a>
               </div>
             </div>

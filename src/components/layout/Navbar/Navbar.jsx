@@ -10,9 +10,8 @@ import { logout } from "../../../redux/APIs/slices/authSlice";
 import { showToast } from "../../../utils/Toast";
 import { useDispatch } from "react-redux";
 
-
 const Navbar = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
@@ -27,22 +26,25 @@ const Navbar = () => {
   // Set dashboard path based on role
   const dashboardPath =
     memoizedUserInfo?.role === "admin" ? "/dashboard/admin" : "/dashboard";
-  // Define dropdown menu items
+
+  // Define dropdown menu items (excluding balance)
   const menuItems = useMemo(
     () => [
       ...(isAdminOrDoctor ? [{ label: "Dashboard", path: dashboardPath }] : []),
-      { label: "Profile", path: "/profile" },
-      { label: "Settings", path: "/settings" },
-      { label: "Logout", path: "/logout" },
+      { label: "Gói", path: "/cart" },
+      { label: "Trang cá nhân", path: "/profile" },
+      { label: "Cài đặt", path: "/settings" },
+      { label: "Đăng xuất", path: "/logout" },
     ],
     [isAdminOrDoctor, dashboardPath]
   );
-  // Handle logout (example implementation, adjust as needed)
+
+  // Handle logout
   const handleLogout = () => {
     dispatch(logout());
-    showToast("Đăng xuất thành công", "success");
+    showToast("Đăng xuất thành công", "success");
     navigate("/login");
-    setIsDropdownOpen(false); 
+    setIsDropdownOpen(false);
   };
 
   // Handle navigation and dropdown toggle
@@ -56,6 +58,7 @@ const Navbar = () => {
     }
     setIsDropdownOpen(!isDropdownOpen);
   };
+
   return (
     <div className="w-full h-20 flex items-center justify-center">
       <div className="w-full h-14 bg-gray-200 rounded-lg flex justify-between items-center px-6">
@@ -130,6 +133,18 @@ const Navbar = () => {
                   transition={{ duration: 0.2, ease: "easeOut" }}
                   className="absolute right-0 mt-2 w-48 bg-gradient-to-br from-white to-indigo-50 rounded-xl shadow-lg border border-indigo-200 py-2"
                 >
+                  {/* Balance Item */}
+                  <motion.div
+                    onClick={() => handleAvatarClick("/balance")}
+                    className="px-4 py-2 text-gray-800 hover:bg-indigo-100 cursor-pointer flex items-center border-b border-indigo-200 transition-colors duration-200 rounded-lg"
+                    whileHover={{ scale: 1.02, backgroundColor: "#e0e7ff" }}
+                  >
+                    <span className="text-sm font-semibold">
+                      Số dư: {(memoizedUserInfo?.balance || 0).toLocaleString("vi-VN")} VNĐ
+                    </span>
+                  </motion.div>
+
+                  {/* Other Menu Items */}
                   {menuItems.map((item) => (
                     <motion.div
                       key={item.label}
