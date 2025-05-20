@@ -14,23 +14,22 @@ const ProtectedRouter = () => {
 };
 
 const AdminProtectedRouter = () => {
-  const { userInfo } = useSelector((state) => state.userLogin);
+  const userLogin = useSelector((state) => state.userLogin || {});
+  const userInfo = userLogin.userInfo;
   const localUserInfo = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;
+
   const isAuthenticated = userInfo?.token || localUserInfo?.token;
   const isAdmin = userInfo?.role === "admin" || localUserInfo?.role === "admin";
 
   return isAuthenticated ? (
-    isAdmin ? (
-      <Outlet />
-    ) : (
-      <Navigate to="/*" />
-    )
+    isAdmin ? <Outlet /> : <Navigate to="/*" />
   ) : (
     <Navigate to="/login" />
   );
 };
+
 const DoctorProtectedRouter = () => {
   const { userInfo } = useSelector((state) => state.authSlice);
   const localUserInfo = localStorage.getItem("userInfo")

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { IoIosSearch } from "react-icons/io";
 import { FiTag, FiShoppingCart, FiUser } from "react-icons/fi";
@@ -26,6 +27,19 @@ const Navbar = () => {
   // Set dashboard path based on role
   const dashboardPath =
     memoizedUserInfo?.role === "admin" ? "/dashboard/admin" : "/dashboard";
+    // Thêm hàm này trước phần useMemo menuItems
+const getSettingsPath = () => {
+  if (!memoizedUserInfo) return "/settings";
+  switch (memoizedUserInfo?.role) {
+    case "doctor":
+      return "/settings/doctor";
+    case "admin":
+      return "/settings/admin";
+    default:
+      return "/settings";
+  }
+};
+
 
   // Define dropdown menu items (excluding balance)
   const menuItems = useMemo(
@@ -33,11 +47,12 @@ const Navbar = () => {
       ...(isAdminOrDoctor ? [{ label: "Dashboard", path: dashboardPath }] : []),
       { label: "Gói", path: "/cart" },
       { label: "Trang cá nhân", path: "/profile" },
-      { label: "Cài đặt", path: "/settings" },
+      { label: "Cài đặt", path: getSettingsPath() },
       { label: "Đăng xuất", path: "/logout" },
     ],
-    [isAdminOrDoctor, dashboardPath]
+    [isAdminOrDoctor, dashboardPath, memoizedUserInfo]
   );
+  
 
   // Handle logout
   const handleLogout = () => {

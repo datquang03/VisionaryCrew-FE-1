@@ -5,6 +5,7 @@ import { GiTechnoHeart } from "react-icons/gi";
 import { FaCalendarDays, FaHeart } from "react-icons/fa6";
 import { BsCameraReelsFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { ColourfulText } from "../../components/3D_Threejs/ColorfulText";
 
 const IconTextLeft = ({ icon, text, bg1, bg2 }) => (
   <div className="group flex items-center space-x-2 transition-transform duration-300 hover:scale-105 cursor-pointer">
@@ -49,10 +50,10 @@ const IconTextRight = ({ icon, text, bg1, bg2 }) => (
 const IntroSection = () => {
   const navigate = useNavigate();
   return (
-    <div className="relative bg-blue-900 text-white flex flex-col items-center justify-between p-8 rounded-lg min-h-[380px]">
+    <div className="relative bg-blue-900 text-white flex flex-col items-center justify-between p-8 rounded-lg h-full">
       {/* Top Title */}
       <h1 className="text-6xl font-bold text-center w-full">
-        CHĂM SÓC SỨC KHỎE
+        <ColourfulText text="CHĂM SÓC SỨC KHOẺ" filter={false}/>
       </h1>
 
       {/* Center - 3D with Icons */}

@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 
 const TypingDescription = () => {
   const texts = [
-    "Không biết phải làm gì ? Đừng lo hãy trải nghiệm với từng bước một.",
-    "Hãy ấn vào nút Bắt đầu trải nghiệm để chúng tôi hướng dẫn bạn",
+    "Không biết phải làm gì ? ",
+    "Đừng lo hãy trải nghiệm với từng bước một.",
+    "Hãy ấn vào nút Bắt đầu trải nghiệm",
   ];
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
@@ -43,7 +44,7 @@ const TypingDescription = () => {
 
   return (
     <div className="max-w-md">
-      <p className="text-lg p-2 bg-gray-200 text-black rounded-lg font-bold h-15 leading-snug break-words">
+      <p className="text-lg p-2 bg-gray-200 text-black rounded-lg font-bold h-10 leading-snug break-words">
         {displayedText}
         <span className="inline-block w-1 h-3.5 bg-black animate-pulse ml-1"></span>
       </p>

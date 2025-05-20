@@ -62,7 +62,6 @@ const UpdateProfilePage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
     const dateOfBirth = formData.dateOfBirth;
     const email = formData.email;
     const phone = formData.phone;

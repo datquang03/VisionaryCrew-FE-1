@@ -6,6 +6,7 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import userImage from "../../assets/defaultAvatar.png";
 import { setNull } from "../../redux/APIs/slices/authSlice";
+import { ColourfulText } from "../../components/3D_Threejs/ColorfulText";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -110,7 +111,7 @@ const ProfilePage = () => {
                   animate="visible"
                   className="text-3xl font-bold text-white"
                 >
-                  {userInfo.username}
+                  <ColourfulText text={userInfo.username} />
                 </motion.h2>
                 <motion.p
                   variants={detailVariants}

@@ -80,7 +80,7 @@ const BalancePage = () => {
         className="text-sm self-start mb-6 ml-4 z-10"
         onClick={() => navigate("/")}
       >
-        Home
+        Trở về trang chủ
       </ThreeDButton>
 
       <h1 className="text-4xl font-bold text-indigo-900 mb-12 text-center">

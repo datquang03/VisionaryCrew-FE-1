@@ -21,7 +21,6 @@ const VerifyEmail = () => {
           navigate("/login");
         })
         .catch((error) => {
-          console.error("Verification error:", error.response?.data); // Debug log
           const message = error.response?.data?.message || "Xác thực thất bại";
           showToast(message, "error");
           navigate("/login");

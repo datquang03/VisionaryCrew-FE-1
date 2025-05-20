@@ -41,7 +41,6 @@ const RegisterPage = () => {
 
   const onSubmit = (data) => {
     const { birthDay, birthMonth, birthYear, ...rest } = data;
-    console.log(data);
     const birthDate = `${String(birthDay).padStart(2, "0")}-${String(
       birthMonth
     ).padStart(2, "0")}-${birthYear}`;
@@ -83,7 +82,6 @@ const RegisterPage = () => {
 
   useEffect(() => {
     if (isSuccessReg) {
-      console.log("Registration Successful:", message);
       localStorage.removeItem("userInfo");
       showToast(message, "success");
       dispatch(setNull());
