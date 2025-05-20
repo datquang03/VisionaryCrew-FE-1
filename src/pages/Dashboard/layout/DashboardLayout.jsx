@@ -15,10 +15,10 @@ const MainLayout = ({ role, children }) => {
 ];
 
 const doctorLinks = [
-    { href: '/doctor/dashboard', label: 'Dashboard', icon: <IoMdHome className="text-2xl" /> },
-    { href: '/doctor/patients', label: 'Patients', icon: <IoMdPeople className="text-2xl" /> },
-    { href: '/doctor/schedule', label: 'Schedule', icon: <IoMdCalendar className="text-2xl" /> },
-    { href: '/doctor/settings', label: 'Settings', icon: <IoMdSettings className="text-2xl" /> },
+    { href: '/dashboard', label: 'Dashboard', icon: <IoMdHome className="text-2xl" /> },
+    { href: '/dashboard', label: 'Patients', icon: <IoMdPeople className="text-2xl" /> },
+    { href: '/dashboard', label: 'Schedule', icon: <IoMdCalendar className="text-2xl" /> },
+    { href: '/dashboard', label: 'Settings', icon: <IoMdSettings className="text-2xl" /> },
     { href: '/', label: 'Về trang chủ', icon: <IoMdHome className="text-2xl" /> },
   ];
 
