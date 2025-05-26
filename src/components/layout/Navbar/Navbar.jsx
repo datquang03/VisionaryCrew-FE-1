@@ -27,19 +27,18 @@ const Navbar = () => {
   // Set dashboard path based on role
   const dashboardPath =
     memoizedUserInfo?.role === "admin" ? "/dashboard/admin" : "/dashboard";
-    // Thêm hàm này trước phần useMemo menuItems
-const getSettingsPath = () => {
-  if (!memoizedUserInfo) return "/settings";
-  switch (memoizedUserInfo?.role) {
-    case "doctor":
-      return "/settings/doctor";
-    case "admin":
-      return "/settings/admin";
-    default:
-      return "/settings";
-  }
-};
-
+  // Thêm hàm này trước phần useMemo menuItems
+  const getSettingsPath = () => {
+    if (!memoizedUserInfo) return "/settings";
+    switch (memoizedUserInfo?.role) {
+      case "doctor":
+        return "/settings/doctor";
+      case "admin":
+        return "/settings/admin";
+      default:
+        return "/settings";
+    }
+  };
 
   // Define dropdown menu items (excluding balance)
   const menuItems = useMemo(
@@ -52,7 +51,6 @@ const getSettingsPath = () => {
     ],
     [isAdminOrDoctor, dashboardPath, memoizedUserInfo]
   );
-  
 
   // Handle logout
   const handleLogout = () => {
@@ -155,7 +153,9 @@ const getSettingsPath = () => {
                     whileHover={{ scale: 1.02, backgroundColor: "#e0e7ff" }}
                   >
                     <span className="text-sm font-semibold">
-                      Số dư: {(memoizedUserInfo?.balance || 0).toLocaleString("vi-VN")} VNĐ
+                      Số dư:{" "}
+                      {(memoizedUserInfo?.balance || 0).toLocaleString("vi-VN")}{" "}
+                      VNĐ
                     </span>
                   </motion.div>
 

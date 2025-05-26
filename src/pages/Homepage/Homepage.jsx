@@ -1,17 +1,19 @@
 /* eslint-disable no-unused-vars */
-import Navbar from "../../components/layout/Navbar/Navbar";
-import IntroSection from "./IntroSection";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useRef, useEffect, useState } from "react";
+import Navbar from "../../components/layout/Navbar/Navbar";
+import MobileNavbar from "../../components/layout/Navbar/MobileNavbar";
 import OptionSection from "./OptionSection";
 import AchievementSection from "./AchievementSection";
 import RatingReview from "./RatingReview";
 import TechStack from "./TechStack";
+import MobileIntroSection from "./MobileIntroSection";
+import IntroSection from "./IntroSection";
 
 // Animation variants for all sections, including Navbar
 const sectionVariants = {
-  hidden: { opacity: 0, y: 50, scale: 0.95 }, // Slide up from below, slightly scaled
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
@@ -23,7 +25,6 @@ const sectionVariants = {
 const Homepage = () => {
   const [isStickyNavbar, setIsStickyNavbar] = useState(false);
   const [isCardHovered, setIsCardHovered] = useState(false);
-  // State to track which sections are revealed in sequence
   const [revealedSections, setRevealedSections] = useState({
     navbar: false,
     intro: false,
@@ -32,20 +33,16 @@ const Homepage = () => {
     rating: false,
     techStack: false,
   });
-
-  // Track if initial load sequence is complete
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
-  // Refs for inView detection
   const optionRef = useRef(null);
   const achievementRef = useRef(null);
   const ratingRef = useRef(null);
   const techStackRef = useRef(null);
 
-  // useInView hooks
   const { ref: optionInViewRef, inView: rawOptionInView } = useInView({
     threshold: 0.3,
-    triggerOnce: false, // Allow re-triggering on scroll
+    triggerOnce: false,
   });
 
   const { ref: achievementInViewRef, inView: rawAchievementInView } = useInView(
@@ -65,7 +62,6 @@ const Homepage = () => {
     triggerOnce: false,
   });
 
-  // Combine refs for each section
   const setOptionRefs = (node) => {
     optionRef.current = node;
     optionInViewRef(node);
@@ -86,7 +82,6 @@ const Homepage = () => {
     techStackInViewRef(node);
   };
 
-  // Sticky Navbar logic
   useEffect(() => {
     const handleScroll = () => {
       setIsStickyNavbar(window.scrollY > 20);
@@ -96,10 +91,8 @@ const Homepage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Sequential animation on page load
   useEffect(() => {
     const timers = [];
-    // Animate sections in sequence
     timers.push(
       setTimeout(() => {
         setRevealedSections((prev) => ({ ...prev, navbar: true }));
@@ -118,20 +111,17 @@ const Homepage = () => {
       }, 1200),
       setTimeout(() => {
         setRevealedSections((prev) => ({ ...prev, techStack: true }));
-        setInitialLoadComplete(true); // Mark initial sequence complete
+        setInitialLoadComplete(true);
       }, 1500)
     );
 
-    return () => timers.forEach(clearTimeout); // Cleanup timers
+    return () => timers.forEach(clearTimeout);
   }, []);
 
-  // Determine animation state for each section
   const getSectionAnimation = (sectionKey, inView) => {
-    // During initial load, use revealedSections state
     if (!initialLoadComplete) {
       return revealedSections[sectionKey] ? "visible" : "hidden";
     }
-    // After initial load, use inView for scroll-based animations
     return inView ? "visible" : "hidden";
   };
 
@@ -144,7 +134,7 @@ const Homepage = () => {
         }`}
       ></div>
 
-      {/* Navbar with initial animation + sticky behavior */}
+      {/* Navbar Section */}
       <motion.div
         initial="hidden"
         animate={revealedSections.navbar ? "visible" : "hidden"}
@@ -153,22 +143,32 @@ const Homepage = () => {
         <div
           className={`transition-all duration-300 ease-in-out ${
             isStickyNavbar
-              ? "fixed top-0 left-0 w-full z-100 bg-white shadow-md"
+              ? "fixed top-0 left-0 w-full z-50 bg-white shadow-md"
               : "relative z-50"
           }`}
         >
-          <Navbar />
+          <div className="hidden md:block">
+            <Navbar />
+          </div>
+          <div className="md:hidden">
+            <MobileNavbar />
+          </div>
         </div>
       </motion.div>
 
       {/* Intro Section */}
       <motion.div
         initial="hidden"
-        animate={getSectionAnimation("intro", true)} // Intro always visible after initial load
+        animate={getSectionAnimation("intro", true)}
         variants={sectionVariants}
-        className="relative z-10 mt-4" // Increased margin to avoid overlap with sticky navbar
+        className="relative z-10 mt-4"
       >
-        <IntroSection />
+        <div className="hidden md:block">
+          <IntroSection />
+        </div>
+        <div className="md:hidden">
+          <MobileIntroSection />
+        </div>
       </motion.div>
 
       {/* Option Section */}

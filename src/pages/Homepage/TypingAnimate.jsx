@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 const TypingDescription = () => {
   const texts = [
     "Không biết phải làm gì ? ",
-    "Đừng lo hãy trải nghiệm với từng bước một.",
-    "Hãy ấn vào nút Bắt đầu trải nghiệm",
+    "Đừng lo hãy trải nghiệm",
+    "Hãy ấn vào nút Bắt đầu !",
   ];
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
