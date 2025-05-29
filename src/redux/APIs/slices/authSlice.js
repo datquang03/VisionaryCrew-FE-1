@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { patchRequest, postRequest } from "../../../services/httpMethods";
+import {
+  getRequest,
+  patchRequest,
+  postRequest,
+} from "../../../services/httpMethods";
 import { handleDangNhap } from "../axios";
 
 export const login = createAsyncThunk("Account/login", async (values) => {
@@ -46,6 +50,17 @@ export const updateProfile = createAsyncThunk(
       return res;
     } catch (error) {
       return error;
+    }
+  }
+);
+export const getDoctors = createAsyncThunk(
+  "Account/getDoctors",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getRequest("users/doctors");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Error fetching doctors");
     }
   }
 );
@@ -174,6 +189,19 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
+      })
+      .addCase(getDoctors.pending, (state) => {
+        state.doctorsStatus = "loading";
+        state.doctorsError = null;
+      })
+      .addCase(getDoctors.fulfilled, (state, action) => {
+        state.doctorsStatus = "succeeded";
+        state.doctors = action.payload;
+      })
+      .addCase(getDoctors.rejected, (state, action) => {
+        state.doctorsStatus = "failed";
+        state.doctorsError =
+          action.payload.message || "Failed to fetch doctors";
       });
   },
 });
