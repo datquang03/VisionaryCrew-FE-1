@@ -3,7 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
 import { getDoctors } from "../../../redux/APIs/slices/authSlice";
 import { gsap } from "gsap";
-import avatar from "../../../assets/defaultAvatar.png";
+import defaultAvatar from "../../../assets/defaultAvatar.png"; // Verify this path
+
+// Import react-icons from the Font Awesome set
+import {
+  FaMicrophone,
+  FaMicrophoneSlash,
+  FaVideo,
+  FaVideoSlash,
+  FaDesktop,
+  FaPhoneSlash,
+} from "react-icons/fa";
 
 const VideoCall = ({ roomId }) => {
   const dispatch = useDispatch();
@@ -27,16 +37,27 @@ const VideoCall = ({ roomId }) => {
   const [localStream, setLocalStream] = useState(null);
   const [socket, setSocket] = useState(null);
 
+  // Debug: Log doctor data and render
+  useEffect(() => {
+    console.log("Doctors Data:", doctors);
+    console.log("Doctors Status:", doctorsStatus);
+    console.log("Doctors Error:", doctorsError);
+    if (doctorsStatus === "succeeded" && doctors.length > 0) {
+      console.log(
+        "Rendering doctors:",
+        doctors.map((d) => d.username)
+      );
+    }
+  }, [doctors, doctorsStatus, doctorsError]);
+
   // Initialize socket and media
   useEffect(() => {
-    // Initialize socket
     const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
       withCredentials: true,
       auth: { token: localStorage.getItem("accessToken") },
     });
     setSocket(newSocket);
 
-    // Initialize media
     const initMedia = async () => {
       try {
         const configuration = {
@@ -56,7 +77,6 @@ const VideoCall = ({ roomId }) => {
           peerConnectionRef.current.addTrack(track, stream);
         });
 
-        // WebRTC event handlers
         peerConnectionRef.current.onicecandidate = (event) => {
           if (event.candidate && selectedDoctor && newSocket) {
             newSocket.emit("ice-candidate", {
@@ -265,35 +285,45 @@ const VideoCall = ({ roomId }) => {
         )}
 
         {doctorsStatus === "succeeded" && (
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 justify-center">
             {doctors.length === 0 ? (
               <p className="text-gray-600">No doctors available</p>
             ) : (
-              doctors.map((doctor) => (
-                <div
-                  key={doctor._id}
-                  className={`flex flex-col items-center p-3 rounded-lg cursor-pointer transition-all ${
-                    selectedDoctor?._id === doctor._id
-                      ? "bg-blue-100 border-2 border-blue-500"
-                      : "bg-white hover:bg-gray-100"
-                  }`}
-                  onClick={() => startCall(doctor._id)}
-                >
-                  <img
-                    src={doctor?.avatar || { avatar }}
-                    alt={doctor?.username}
-                    className="w-16 h-16 rounded-full object-cover mb-2"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    {doctor.username}
-                  </span>
-                  {selectedDoctor?._id === doctor._id && (
-                    <span className="text-xs text-green-600 mt-1">
-                      Connected
+              <div>
+                {doctors.map((doctor) => (
+                  <div
+                    key={doctor._id}
+                    className={`flex flex-col items-center p-3 rounded-lg cursor-pointer transition-all ${
+                      selectedDoctor?._id === doctor._id
+                        ? "bg-blue-100 border-2 border-blue-500"
+                        : "bg-white hover:bg-gray-100"
+                    }`}
+                    onClick={() => startCall(doctor._id)}
+                  >
+                    <img
+                      src={doctor.avatar || defaultAvatar}
+                      alt={doctor.username}
+                      className="w-16 h-16 rounded-full object-cover mb-2 border-2 border-gray-300"
+                      onError={(e) => {
+                        console.error(
+                          "Image load error for:",
+                          doctor.username,
+                          e
+                        );
+                        e.target.src = defaultAvatar;
+                      }}
+                    />
+                    <span className="text-sm font-medium text-gray-700 text-center">
+                      {doctor.username}
                     </span>
-                  )}
-                </div>
-              ))
+                    {selectedDoctor?._id === doctor._id && (
+                      <span className="text-xs text-green-600 mt-1">
+                        Connected
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}
@@ -329,45 +359,45 @@ const VideoCall = ({ roomId }) => {
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="controls flex justify-center gap-4">
+      {/* Controls with react-icons */}
+      <div className="controls flex justify-center gap-4  ">
         <button
-          className={`p-3 rounded-full text-white text-xl shadow-md transition-all ${
+          className={`p-3 rounded-full text-white text-xl shadow-md transition-all cursor-pointer ${
             isMuted ? "bg-red-500" : "bg-blue-500"
           }`}
           onClick={toggleMute}
           title={isMuted ? "Unmute" : "Mute"}
         >
-          <i className={`fas fa-microphone${isMuted ? "-slash" : ""}`}></i>
+          {isMuted ? <FaMicrophoneSlash /> : <FaMicrophone />}
         </button>
 
         <button
-          className={`p-3 rounded-full text-white text-xl shadow-md transition-all ${
+          className={`p-3 rounded-full text-white text-xl shadow-md transition-all cursor-pointer ${
             isVideoOff ? "bg-red-500" : "bg-blue-500"
           }`}
           onClick={toggleVideo}
           title={isVideoOff ? "Turn Video On" : "Turn Video Off"}
         >
-          <i className={`fas fa-video${isVideoOff ? "-slash" : ""}`}></i>
+          {isVideoOff ? <FaVideoSlash /> : <FaVideo />}
         </button>
 
         <button
-          className={`p-3 rounded-full text-white text-xl shadow-md transition-all ${
+          className={`p-3 rounded-full text-white text-xl shadow-md transition-all cursor-pointer ${
             isSharingScreen ? "bg-green-500" : "bg-blue-500"
           }`}
           onClick={shareScreen}
           title={isSharingScreen ? "Stop Sharing" : "Share Screen"}
         >
-          <i className="fas fa-desktop"></i>
+          <FaDesktop />
         </button>
 
         <button
-          className="p-3 rounded-full bg-red-500 text-white text-xl shadow-md transition-all"
+          className="p-3 rounded-full bg-red-500 text-white text-xl shadow-md transition-all cursor-pointer"
           onClick={endCall}
           title="End Call"
           disabled={!selectedDoctor}
         >
-          <i className="fas fa-phone-slash"></i>
+          <FaPhoneSlash />
         </button>
       </div>
     </div>
