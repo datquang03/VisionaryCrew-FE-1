@@ -25,6 +25,7 @@ import DoctorSettingPage from "./pages/Setting/DoctorSettingPage";
 import AdminSettingPage from "./pages/Setting/AdminSettingPage";
 import Dashboard from "./pages/Dashboard/Doctor/Dashboard";
 import CallVideo from "./pages/Call-Video/CallVideo";
+import MessagePage from "./pages/Message/MessagePage";
 
 const App = () => {
   return (
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/update-profile" element={<UpdateProfilePage />} />
           <Route path="/update-email/code" element={<EmailUpdateVerify />} />
           <Route path="/video" element={<CallVideo />} />
+          <Route path="/message" element={<MessagePage />} />
 
           <Route element={<DoctorProtectedRouter />}>
             <Route path="/dashboard" element={<Dashboard />} />
