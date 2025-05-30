@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
-import { getDoctors } from "../../../redux/APIs/slices/authSlice";
 import { gsap } from "gsap";
 import defaultAvatar from "../../../assets/defaultAvatar.png"; // Verify this path
 
@@ -14,15 +13,13 @@ import {
   FaDesktop,
   FaPhoneSlash,
 } from "react-icons/fa";
+import { getDoctors } from "../../../redux/APIs/slices/doctorSlice";
 
 const VideoCall = ({ roomId }) => {
   const dispatch = useDispatch();
-  const authState = useSelector((state) => state.auth || {});
-  const {
-    doctors = [],
-    status: doctorsStatus = "idle",
-    error: doctorsError = null,
-  } = authState;
+  const { doctors, isLoading, isSuccess } = useSelector(
+    (state) => state.doctorSlice
+  );
 
   // Refs
   const localVideoRef = useRef(null);
@@ -39,16 +36,8 @@ const VideoCall = ({ roomId }) => {
 
   // Debug: Log doctor data and render
   useEffect(() => {
-    console.log("Doctors Data:", doctors);
-    console.log("Doctors Status:", doctorsStatus);
-    console.log("Doctors Error:", doctorsError);
-    if (doctorsStatus === "succeeded" && doctors.length > 0) {
-      console.log(
-        "Rendering doctors:",
-        doctors.map((d) => d.username)
-      );
-    }
-  }, [doctors, doctorsStatus, doctorsError]);
+    console.log(doctors)
+  }, [doctors]);
 
   // Initialize socket and media
   useEffect(() => {
@@ -158,10 +147,8 @@ const VideoCall = ({ roomId }) => {
 
   // Fetch doctors
   useEffect(() => {
-    if (doctorsStatus === "idle") {
-      dispatch(getDoctors());
-    }
-  }, [dispatch, doctorsStatus]);
+    dispatch(getDoctors());
+  }, [dispatch]);
 
   // GSAP animations
   useEffect(() => {
@@ -274,17 +261,17 @@ const VideoCall = ({ roomId }) => {
           Available Doctors
         </h3>
 
-        {doctorsStatus === "loading" && (
+        {isLoading === true && (
           <p className="text-center text-gray-600">Loading doctors...</p>
         )}
 
-        {doctorsStatus === "failed" && (
+        {isSuccess === false && (
           <p className="text-center text-red-500">
-            Error: {doctorsError || "Failed to load doctors"}
+            Error: { "Failed to load doctors"}
           </p>
         )}
 
-        {doctorsStatus === "succeeded" && (
+        {isSuccess === true && (
           <div className="flex flex-wrap gap-4 justify-center">
             {doctors.length === 0 ? (
               <p className="text-gray-600">No doctors available</p>

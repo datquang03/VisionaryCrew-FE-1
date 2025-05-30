@@ -190,19 +190,7 @@ const authSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
       })
-      .addCase(getDoctors.pending, (state) => {
-        state.doctorsStatus = "loading";
-        state.doctorsError = null;
-      })
-      .addCase(getDoctors.fulfilled, (state, action) => {
-        state.doctorsStatus = "succeeded";
-        state.doctors = action.payload;
-      })
-      .addCase(getDoctors.rejected, (state, action) => {
-        state.doctorsStatus = "failed";
-        state.doctorsError =
-          action.payload.message || "Failed to fetch doctors";
-      });
+
   },
 });
 

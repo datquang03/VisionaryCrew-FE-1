@@ -29,8 +29,9 @@ const MessageItem = ({ message, userId, onDelete, onEdit }) => {
     }
   };
 
-  const isSender = message.sender === userId;
+  const isSender = message.sender._id === userId;
 
+  console.log(message)
   return (
     <div className={`mb-4 flex ${isSender ? "justify-end" : "justify-start"}`}>
       <div
