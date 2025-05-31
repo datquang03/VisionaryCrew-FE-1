@@ -220,7 +220,7 @@ const LoginPage = () => {
               >
                 {isLoading ? (
                   <div className="w-full flex items-center justify-center">
-                    <ShortLoading text="Đợi chút nha" />
+                    <ShortLoading text="Đang đăng nhập" />
                   </div>
                 ) : (
                   "Đăng Nhập"

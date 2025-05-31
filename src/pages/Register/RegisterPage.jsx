@@ -222,10 +222,12 @@ const RegisterPage = () => {
             <button
               type="submit"
               disabled={isLoading || isSubmitting}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 cursor-pointer disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 cursor-pointer disabled:opacity-50 justify-center"
             >
               {isLoading || isSubmitting ? (
-                <ShortLoading text="Đợi chút nha" />
+                <div className="flex justify-center items-center w-full">
+                  <ShortLoading text="Đang đăng kí" />
+                </div>
               ) : (
                 "Đăng kí"
               )}

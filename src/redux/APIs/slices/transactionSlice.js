@@ -10,7 +10,7 @@ export const createPaymentUrl = createAsyncThunk(
         orderId,
         orderInfo,
       });
-      const response = await axiosClient.post("/transactions/create_payment_url", {
+      const response = await axiosClient.post("/transactions/vnpay/create", {
         amount,
         orderId,
         orderInfo,

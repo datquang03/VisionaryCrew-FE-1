@@ -24,6 +24,7 @@ import CartPage from "./pages/Cart/CartPage";
 import SettingPage from "./pages/Setting/SettingPage";
 import DoctorSettingPage from "./pages/Setting/DoctorSettingPage";
 import AdminSettingPage from "./pages/Setting/AdminSettingPage";
+import DoctorBlogPage from "./pages/Dashboard/Blog/DoctorBlogPage";
 
 const App = () => {
   return (
@@ -47,7 +48,9 @@ const App = () => {
             <Route path="/update-email/code" element={<EmailUpdateVerify />} />
             <Route element={<DoctorProtectedRouter />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/settings/doctor" element={<DoctorSettingPage />} />
+              <Route path="/patients" element={<DoctorSettingPage />} />
+              <Route path="/schedule" element={<DoctorSettingPage />} />
+              <Route path="/dashboard/blog" element={<DoctorBlogPage />} />
             </Route>
             <Route element={<AdminProtectedRouter />}>
               <Route path="/dashboard/admin" element={<DashboardAdminPage />} />
