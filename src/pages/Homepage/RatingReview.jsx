@@ -10,14 +10,13 @@ const RatingReview = () => {
   const subtitleRef = useRef(null);
 
   useEffect(() => {
-    // Đảm bảo GSAP hoạt động sau khi component được render
     const container = containerRef.current;
     const title = titleRef.current;
     const stars = starsRef.current;
     const subtitle = subtitleRef.current;
 
-    // Animation khi hover
-    const onHover = () => {
+    // Animation when interacting (hover or touch)
+    const onInteractStart = () => {
       gsap.to(container, {
         scale: 1.02,
         backgroundImage:
@@ -38,9 +37,9 @@ const RatingReview = () => {
         color: "#facc15", // yellow-400
         duration: 0.5,
         ease: "power2.out",
-        stagger: 0.1, // Hiệu ứng lần lượt cho từng sao
-        repeat: 1, // Lặp lại để tạo hiệu ứng nhấp nháy
-        yoyo: true, // Quay lại trạng thái ban đầu
+        stagger: 0.1,
+        repeat: 1,
+        yoyo: true,
       });
 
       gsap.to(subtitle, {
@@ -51,8 +50,7 @@ const RatingReview = () => {
       });
     };
 
-    // Animation khi rời hover
-    const onLeave = () => {
+    const onInteractEnd = () => {
       gsap.to(container, {
         scale: 1,
         backgroundImage:
@@ -83,30 +81,37 @@ const RatingReview = () => {
       });
     };
 
-    // Thêm sự kiện hover
-    container.addEventListener("mouseenter", onHover);
-    container.addEventListener("mouseleave", onLeave);
+    // Add hover and touch events
+    container.addEventListener("mouseenter", onInteractStart);
+    container.addEventListener("mouseleave", onInteractEnd);
+    container.addEventListener("touchstart", onInteractStart);
+    container.addEventListener("touchend", onInteractEnd);
 
-    // Cleanup sự kiện khi component unmount
+    // Cleanup events on unmount
     return () => {
-      container.removeEventListener("mouseenter", onHover);
-      container.removeEventListener("mouseleave", onLeave);
+      container.removeEventListener("mouseenter", onInteractStart);
+      container.removeEventListener("mouseleave", onInteractEnd);
+      container.removeEventListener("touchstart", onInteractStart);
+      container.removeEventListener("touchend", onInteractEnd);
     };
   }, []);
 
   return (
     <div
       ref={containerRef}
-      className="w-full mt-4 rounded-3xl p-4 from-green-300 via-green-500 to-green-600 bg-gradient-to-br shadow-lg relative h-100 flex justify-center items-center"
+      className="w-full mt-4 rounded-3xl p-4 sm:p-6 md:p-8 bg-gradient-to-br from-green-300 via-green-500 to-green-600 shadow-lg flex justify-center items-center min-h-[300px] sm:min-h-[350px] md:min-h-[400px] max-w-5xl mx-auto"
     >
-      <div className="w-[70%] mx-auto text-center">
-        <h2 ref={titleRef} className="text-4xl font-bold text-cyan-100">
+      <div className="w-full max-w-[90%] sm:max-w-[80%] md:max-w-[70%] mx-auto text-center">
+        <h2
+          ref={titleRef}
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-cyan-100 mb-4 sm:mb-6 md:mb-8"
+        >
           Chúng tôi đã nhận được hơn 1000+ lượt tương tác tốt trên tất cả các
           mạng xã hội
         </h2>
         <div
           ref={starsRef}
-          className="flex justify-center mt-10 text-yellow-600 gap-2 text-2xl"
+          className="flex justify-center gap-1 sm:gap-2 text-xl sm:text-2xl md:text-3xl text-yellow-600 mt-6 sm:mt-8 md:mt-10"
         >
           <FaStar />
           <FaStar />
@@ -114,7 +119,10 @@ const RatingReview = () => {
           <FaStar />
           <FaStarHalfAlt />
         </div>
-        <p ref={subtitleRef} className="text-lg text-amber-300 mt-5">
+        <p
+          ref={subtitleRef}
+          className="text-sm sm:text-base md:text-lg text-amber-300 mt-4 sm:mt-5 md:mt-6"
+        >
           Đánh giá trung bình trên mạng xã hội là 4.6
         </p>
       </div>

@@ -1,13 +1,24 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
+import React, { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { showToast } from "../../../utils/Toast";
+import { useDispatch, useSelector } from "react-redux";
+import { resetPassword, setNull } from "../../../redux/APIs/slices/authSlice";
 
 const ResetPassword = () => {
+  const dispatch = useDispatch();
+  const {isSuccess,isLoading, message } = useSelector(
+    (state) => state.authSlice
+  );
   const containerRef = useRef(null);
   const buttonRef = useRef(null);
-  const eyeIconRefs = useRef([]); // Array to store refs for eye icons
+  const eyeIconRefs = useRef([]);
+  // Refs for input fields
+  const oldPasswordRef = useRef(null);
+  const newPasswordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   // State to track visibility for each password field
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -19,37 +30,48 @@ const ResetPassword = () => {
     gsap.fromTo(
       containerRef.current,
       { opacity: 0, rotateX: 10 },
-      { opacity: 1, rotateX: 0, duration: 1, ease: 'power3.out' }
+      { opacity: 1, rotateX: 0, duration: 1, ease: "power3.out" }
     );
 
     // Input fields: staggered fade-in with upward motion and scale
     gsap.fromTo(
-      '.input-field',
+      ".input-field",
       { opacity: 0, y: 30, scale: 0.95 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.2, ease: 'power2.out', delay: 0.2 }
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        delay: 0.2,
+      }
     );
 
     // Button: pulse effect on load
     gsap.fromTo(
       buttonRef.current,
       { scale: 0.9, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.7)', delay: 0.8 }
+      { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.7)", delay: 0.8 }
     );
     gsap.to(buttonRef.current, {
       scale: 1.02,
       duration: 1.5,
       repeat: -1,
       yoyo: true,
-      ease: 'sine.inOut',
+      ease: "sine.inOut",
     });
   }, []);
 
   const handleButtonHover = (e) => {
     gsap.to(buttonRef.current, {
-      scale: e.type === 'mouseenter' ? 1.1 : 1,
-      boxShadow: e.type === 'mouseenter' ? '0 0 15px rgba(59, 130, 246, 0.5)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      scale: e.type === "mouseenter" ? 1.1 : 1,
+      boxShadow:
+        e.type === "mouseenter"
+          ? "0 0 15px rgba(59, 130, 246, 0.5)"
+          : "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
       duration: 0.3,
-      ease: 'power1.inOut',
+      ease: "power1.inOut",
     });
   };
 
@@ -59,31 +81,57 @@ const ResetPassword = () => {
       duration: 0.1,
       yoyo: true,
       repeat: 1,
-      ease: 'power1.inOut',
+      ease: "power1.inOut",
       onComplete: () => {
         gsap.to(buttonRef.current, { scale: 1, duration: 0.2 });
       },
     });
+
+    // Get input values
+    const oldPassword = oldPasswordRef.current.value;
+    const newPassword = newPasswordRef.current.value;
+    const confirmPassword = confirmPasswordRef.current.value;
+
+    // Check if new password matches confirm password
+    if (newPassword === confirmPassword) {
+      const value = {
+        oldPassword,
+        newPassword,
+      };
+      dispatch(resetPassword(value));
+      showToast(message, "success");
+    } else {
+      showToast("Mật khẩu mới và xác nhận mật khẩu không khớp!", "error");
+    }
   };
+  useEffect(()=>{
+    if (isSuccess) {
+      showToast(message, "success");
+      oldPasswordRef.current.value = "";
+      newPasswordRef.current.value = "";
+      confirmPasswordRef.current.value = "";
+      setTimeout(() => {
+        dispatch(setNull())
+      }, 3000);
+    }
+  },[isSuccess, message])
 
   const togglePasswordVisibility = (field, index) => {
-    // Toggle the appropriate state based on the field
-    if (field === 'old') setShowOldPassword((prev) => !prev);
-    if (field === 'new') setShowNewPassword((prev) => !prev);
-    if (field === 'confirm') setShowConfirmPassword((prev) => !prev);
+    if (field === "old") setShowOldPassword((prev) => !prev);
+    if (field === "new") setShowNewPassword((prev) => !prev);
+    if (field === "confirm") setShowConfirmPassword((prev) => !prev);
 
-    // Animate the eye icon on toggle
     gsap.to(eyeIconRefs.current[index], {
       scale: 0.8,
       opacity: 0.7,
       duration: 0.2,
-      ease: 'power1.inOut',
+      ease: "power1.inOut",
       onComplete: () => {
         gsap.to(eyeIconRefs.current[index], {
           scale: 1,
           opacity: 1,
           duration: 0.2,
-          ease: 'power1.inOut',
+          ease: "power1.inOut",
         });
       },
     });
@@ -100,61 +148,64 @@ const ResetPassword = () => {
         </h2>
         <div className="relative mb-4">
           <input
-            type={showOldPassword ? 'text' : 'password'}
+            type={showOldPassword ? "text" : "password"}
             placeholder="Mật khẩu cũ"
             className="input-field w-full p-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300"
+            ref={oldPasswordRef}
           />
           {showOldPassword ? (
             <IoMdEyeOff
               ref={(el) => (eyeIconRefs.current[0] = el)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 cursor-pointer text-xl"
-              onClick={() => togglePasswordVisibility('old', 0)}
+              onClick={() => togglePasswordVisibility("old", 0)}
             />
           ) : (
             <IoMdEye
               ref={(el) => (eyeIconRefs.current[0] = el)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 cursor-pointer text-xl"
-              onClick={() => togglePasswordVisibility('old', 0)}
+              onClick={() => togglePasswordVisibility("old", 0)}
             />
           )}
         </div>
         <div className="relative mb-4">
           <input
-            type={showNewPassword ? 'text' : 'password'}
+            type={showNewPassword ? "text" : "password"}
             placeholder="Mật khẩu mới"
             className="input-field w-full p-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300"
+            ref={newPasswordRef}
           />
           {showNewPassword ? (
             <IoMdEyeOff
               ref={(el) => (eyeIconRefs.current[1] = el)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 cursor-pointer text-xl"
-              onClick={() => togglePasswordVisibility('new', 1)}
+              onClick={() => togglePasswordVisibility("new", 1)}
             />
           ) : (
             <IoMdEye
               ref={(el) => (eyeIconRefs.current[1] = el)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 cursor-pointer text-xl"
-              onClick={() => togglePasswordVisibility('new', 1)}
+              onClick={() => togglePasswordVisibility("new", 1)}
             />
           )}
         </div>
         <div className="relative mb-6">
           <input
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? "text" : "password"}
             placeholder="Xác nhận mật khẩu"
             className="input-field w-full p-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300"
+            ref={confirmPasswordRef}
           />
           {showConfirmPassword ? (
             <IoMdEyeOff
               ref={(el) => (eyeIconRefs.current[2] = el)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 cursor-pointer text-xl"
-              onClick={() => togglePasswordVisibility('confirm', 2)}
+              onClick={() => togglePasswordVisibility("confirm", 2)}
             />
           ) : (
             <IoMdEye
               ref={(el) => (eyeIconRefs.current[2] = el)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 cursor-pointer text-xl"
-              onClick={() => togglePasswordVisibility('confirm', 2)}
+              onClick={() => togglePasswordVisibility("confirm", 2)}
             />
           )}
         </div>

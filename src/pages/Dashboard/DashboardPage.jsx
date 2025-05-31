@@ -1,7 +1,4 @@
-"use client";
-
-import React from 'react';
-import MainLayout from './layout/DashboardLayout';
+import MainLayout from "./layout/DashboardLayout";
 
 const DashboardAdminPage = () => {
   return (
@@ -11,7 +8,8 @@ const DashboardAdminPage = () => {
           Admin Dashboard
         </h1>
         <p className="text-gray-600 dark:text-gray-300 text-center">
-          Welcome to the Admin Dashboard. Here you can view analytics, manage users, and more.
+          Welcome to the Admin Dashboard. Here you can view analytics, manage
+          users, and more.
         </p>
         {/* Add more dashboard content as needed */}
       </div>

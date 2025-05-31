@@ -23,7 +23,8 @@ const MainLayout = ({ role, children }) => {
     { href: '/', label: 'Về trang chủ', icon: <IoMdHome className="text-2xl" /> },
   ];
 
-  const links = role === 'Admin' ? adminLinks : role === 'Doctor' ? doctorLinks : [];
+  const links =
+    role === "Admin" ? adminLinks : role === "Doctor" ? doctorLinks : [];
 
   return (
     <div className="flex h-screen overflow-hidden">

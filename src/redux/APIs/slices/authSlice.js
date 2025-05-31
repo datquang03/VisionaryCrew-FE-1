@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  getRequest,
   patchRequest,
   postRequest,
 } from "../../../services/httpMethods";
 import { handleDangNhap } from "../axios";
-
 
 export const login = createAsyncThunk("Account/login", async (values) => {
   try {
@@ -20,7 +20,21 @@ export const registerAcc = createAsyncThunk(
   async (payload) => {
     try {
       const response = await postRequest("users/register", payload);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  }
+);
 
+export const resetPassword = createAsyncThunk(
+  "Account/resetPassword",
+  async (payload) => {
+    try {
+      const response = await postRequest(
+        "users/reset-password-by-old",
+        payload
+      );
       return response;
     } catch (error) {
       return error;
@@ -39,6 +53,17 @@ export const updateProfile = createAsyncThunk(
     }
   }
 );
+export const getDoctors = createAsyncThunk(
+  "Account/getDoctors",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getRequest("users/doctors");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Error fetching doctors");
+    }
+  }
+);
 
 const initialState = {
   user: null,
@@ -47,7 +72,7 @@ const initialState = {
   isError: null,
   message: null,
   updatedUser: null,
-  isSuccessReg:false
+  isSuccessReg: false,
 };
 
 const authSlice = createSlice({
@@ -64,7 +89,8 @@ const authSlice = createSlice({
     },
     setNull(state) {
       state.isSuccess = false;
-      state.isSuccessReg = false
+      state.isSuccessReg = false;
+      state.message = null;
     },
   },
   extraReducers: (builder) => {
@@ -81,6 +107,10 @@ const authSlice = createSlice({
           state.isSuccess = true;
           state.isLoading = false;
           state.isError = false;
+          setTimeout(() => {
+            state.isSuccess = false;
+            state.message = null;
+          }, 3000);
         } else {
           state.message = action.payload.response.data.message;
           state.isSuccess = false;
@@ -103,6 +133,7 @@ const authSlice = createSlice({
           state.isSuccessReg = true;
           state.isLoading = false;
           state.isError = false;
+
           state.message = action.payload.data.message;
         } else {
           state.message = action.payload.response.data.message;
@@ -116,7 +147,6 @@ const authSlice = createSlice({
         state.isSuccessReg = false;
         state.isError = true;
       })
-
       .addCase(updateProfile.pending, (state) => {
         state.isLoading = true;
         state.isSuccess = false;
@@ -138,7 +168,29 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
-      });
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccess = false;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        if (action.payload.status === 200 || action.payload.status === 201) {
+          state.isLoading = false;
+          state.isSuccess = true;
+          state.message = action.payload.data.message;
+        } else {
+          state.isLoading = false;
+          state.isSuccess = false;
+          state.isError = true;
+          state.message = action.payload.response.data.message;
+        }
+      })
+      .addCase(resetPassword.rejected, (state) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+      })
+
   },
 });
 
