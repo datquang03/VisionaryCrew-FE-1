@@ -14,14 +14,7 @@ const MessagePage = () => {
   const chatContainerRef = useRef(null);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const token = userInfo ? userInfo.token : null;
-  const userId =
-    userInfo?.username === "nhatanh"
-      ? "6832f0d1925ac4e968aa2413"
-      : "682c19deaa8cdf0fe4bd9e0a";
-  const userId2 =
-    userInfo?.username === "nhatanh"
-      ? "682c19deaa8cdf0fe4bd9e0a"
-      : "6832f0d1925ac4e968aa2413";
+  const userId = userInfo?._id;
 
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -44,23 +37,23 @@ const MessagePage = () => {
 
   // Fetch messages when selectedUser changes
   useEffect(() => {
-    if (!userId2) return;
+    if (!selectedUser) return;
 
     const fetchMessages = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/api/messages/${userId}/${userId2}`,
+          `${API_URL}/api/messages/${userId}/${selectedUser._id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+        console.log("Fetched messages:", response.data); // Debug log
         setMessages(response.data);
 
-        // Mark messages as read
         await axios.put(
-          `${API_URL}/api/messages/read/${userId}/${userId2}`,
+          `${API_URL}/api/messages/read/${userId}/${selectedUser._id}`,
           {},
           {
             headers: {
@@ -74,38 +67,44 @@ const MessagePage = () => {
     };
 
     fetchMessages();
-  }, [ API_URL, userId, userId2, token]);
+  }, [API_URL, userId, selectedUser, token]);
 
   // Handle real-time messages, deletes, and edits
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !selectedUser) {
+      console.log("Socket or selectedUser not set:", { socket, selectedUser });
+      return;
+    }
 
     const handleReceiveMessage = (messageData) => {
-      console.log("Received message:", messageData); 
+      console.log("Received message:", messageData);
       if (
-        (messageData.sender?._id === userId2 &&
+        (messageData.sender?._id === selectedUser._id &&
           messageData.receiver?._id === userId) ||
         (messageData.sender?._id === userId &&
-          messageData.receiver?._id === userId2)
+          messageData.receiver?._id === selectedUser._id)
       ) {
         setMessages((prevMessages) => {
           if (prevMessages.some((msg) => msg._id === messageData._id)) {
+            console.log("Duplicate message ignored:", messageData._id);
             return prevMessages;
           }
           return [...prevMessages, messageData];
         });
+      } else {
+        console.log("Message filtered out:", { messageData, userId, selectedUser });
       }
     };
 
     const handleMessageDeleted = ({ messageId }) => {
-      console.log("Message deleted:", messageId); // Debug log
+      console.log("Message deleted:", messageId);
       setMessages((prevMessages) =>
         prevMessages.filter((msg) => msg._id !== messageId)
       );
     };
 
     const handleMessageEdited = ({ messageId, content, updatedAt }) => {
-      console.log("Message edited:", { messageId, content, updatedAt }); // Debug log
+      console.log("Message edited:", { messageId, content, updatedAt });
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg._id === messageId ? { ...msg, content, updatedAt } : msg
@@ -122,7 +121,7 @@ const MessagePage = () => {
       socket.off("message-deleted", handleMessageDeleted);
       socket.off("message-edited", handleMessageEdited);
     };
-  }, [socket, selectedUser, userId, userId2]);
+  }, [socket, selectedUser, userId]);
 
   // Auto-scroll chat to the bottom
   useEffect(() => {
@@ -134,22 +133,20 @@ const MessagePage = () => {
 
   // Send a message
   const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !selectedUser) return;
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/api/messages/send`,
         {
           senderId: userId,
-          receiverId: userId2,
+          receiverId: selectedUser._id,
           content: newMessage,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      setMessages((prevMessages) => [...prevMessages, response.data]);
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -167,7 +164,7 @@ const MessagePage = () => {
       socket.emit("delete-message", {
         messageId,
         userId,
-        receiverId: userId2,
+        receiverId: selectedUser._id,
       });
     } catch (error) {
       console.error("Error deleting message:", error);
@@ -189,7 +186,7 @@ const MessagePage = () => {
         messageId,
         userId,
         content,
-        receiverId: userId2,
+        receiverId: selectedUser._id,
       });
     } catch (error) {
       console.error("Error editing message:", error);
@@ -203,11 +200,15 @@ const MessagePage = () => {
   };
 
   const filteredMessages = selectedUser
-    ? messages.filter(
-        (msg) =>
-          (msg.sender?._id === userId && msg.receiver?._id === userId2) ||
-          (msg.sender?._id === userId2 && msg.receiver?._id === userId)
-      )
+    ? messages.filter((msg) => {
+        const isValid =
+          (msg.sender?._id === userId && msg.receiver?._id === selectedUser._id) ||
+          (msg.sender?._id === selectedUser._id && msg.receiver?._id === userId);
+        if (!isValid) {
+          console.log("Filtered out message:", msg);
+        }
+        return isValid;
+      })
     : [];
 
   return (

@@ -12,14 +12,14 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
   // Default user data
   const defaultUsers = [
     {
-      _id: "682c19deaa8cdf0fe4bd9e0a",
-      username: "Dr. Smith",
+      _id: "682ac559d587fe5f04959af3",
+      username: "Đạt Quang",
       role: "Doctor",
       avatar: defaultImage,
     },
     {
-      _id: "682ac559d587fe5f04959af3",
-      username: "John Doe",
+      _id: "6832f0d1925ac4e968aa2413",
+      username: "Nhật Anh",
       role: "Patient",
       avatar: defaultImage,
     },
