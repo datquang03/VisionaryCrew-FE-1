@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import userImage from "../../../assets/defaultAvatar.png";
 import { updateProfile } from "../../../redux/APIs/slices/authSlice";
 import { showToast } from "../../../utils/Toast";
+import ShortLoading from "../../../components/Loading/ShortLoading";
 
 const UpdateProfilePage = () => {
   const navigate = useNavigate();
@@ -102,7 +103,7 @@ const UpdateProfilePage = () => {
             exit={{ opacity: 0 }}
             className="text-white text-xl"
           >
-            Đang tải thông tin...
+            <ShortLoading text={"Đang cập nhật"}/>
           </motion.div>
         ) :  userInfo ? (
           <motion.div
