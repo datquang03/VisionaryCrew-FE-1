@@ -3,40 +3,30 @@ import React, { useEffect, useRef } from "react";
 import { FaComments, FaSearch, FaCog, FaHome } from "react-icons/fa";
 import defaultImage from "../../../assets/defaultAvatar.png"; // Adjust path as needed
 import { gsap } from "gsap";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserMessaged } from "../../../redux/APIs/slices/messageSlice";
 
 const Sidebar = ({ onSelectUser, selectedUser }) => {
+  const dispatch = useDispatch();
   const headerIconsRef = useRef([]);
   const userItemsRef = useRef([]);
   const homeButtonRef = useRef(null);
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userId = userInfo?._id;
+  const { userMessaged, isLoading, isSuccess } = useSelector((state) => state.messageSlice);
 
-  // Default user data
-  const defaultUsers = [
-    {
-      _id: "682ac559d587fe5f04959af3",
-      username: "Đạt Quang",
-      role: "Doctor",
-      avatar: defaultImage,
-    },
-    {
-      _id: "6832f0d1925ac4e968aa2413",
-      username: "Nhật Anh",
-      role: "Patient",
-      avatar: defaultImage,
-    },
-    {
-      _id: "6837ff09abfbc09caf3cc06d",
-      username: "Jane Roe",
-      role: "Patient",
-      avatar: defaultImage,
-    },
-  ];
+  useEffect(() => {
+    if (userId) {
+      dispatch(getUserMessaged(userId));
+    }
+  }, [userId, dispatch]);
 
   // GSAP Animations (Bottom to Top)
   useEffect(() => {
     // Animate Header Icons
     gsap.fromTo(
       headerIconsRef.current,
-      { y: 50, opacity: 0 }, // Start from below
+      { y: 50, opacity: 0 },
       {
         y: 0,
         opacity: 1,
@@ -50,7 +40,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
     // Animate User List Items
     gsap.fromTo(
       userItemsRef.current,
-      { y: 50, opacity: 0 }, // Start from below
+      { y: 50, opacity: 0 },
       {
         y: 0,
         opacity: 1,
@@ -64,7 +54,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
     // Animate Home Button
     gsap.fromTo(
       homeButtonRef.current,
-      { y: 50, opacity: 0 }, // Start from below
+      { y: 50, opacity: 0 },
       {
         y: 0,
         opacity: 1,
@@ -98,28 +88,55 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
 
       {/* User List */}
       <div className="flex-1 overflow-y-auto">
-        {defaultUsers.map((user, index) => (
-          <div
-            key={user._id}
-            className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-800 transition-all duration-300 ${
-              selectedUser?._id === user._id
-                ? "bg-gradient-to-r from-blue-900 to-blue-800"
-                : ""
-            }`}
-            onClick={() => onSelectUser(user)}
-            ref={(el) => (userItemsRef.current[index] = el)}
-          >
-            <img
-              src={user.avatar}
-              alt={user.username}
-              className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
-            />
-            <div>
-              <p className="font-medium text-white">{user.username}</p>
-              <p className="text-sm text-gray-400">{user.role}</p>
+        {isLoading ? (
+          <div className="p-4 text-gray-400">Loading...</div>
+        ) : isSuccess && userMessaged?.length > 0 ? (
+          userMessaged.map((item, index) => (
+            <div
+              key={item.user._id}
+              className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-800 transition-all duration-300 ${
+                selectedUser?._id === item.user._id
+                  ? "bg-gradient-to-r from-blue-900 to-blue-800"
+                  : ""
+              }`}
+              onClick={() => onSelectUser(item.user)
+           }
+              ref={(el) => (userItemsRef.current[index] = el)}
+            >
+              <img
+                src={item.user.avatar || defaultImage}
+                alt={item.user.username}
+                className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+              />
+              <div className="flex-1">
+                <div className="flex justify-between items-center">
+                  <p className="font-medium text-white">{item.user.username}</p>
+                  {item.lastMessage && (
+                    <p className="text-xs text-gray-500">
+                      {new Date(item.lastMessage.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  )}
+                </div>
+                {item.lastMessage && (
+                  <p
+                    className={`text-sm ${
+                      item.lastMessage.read
+                        ? "text-gray-400"
+                        : "text-white font-semibold"
+                    } truncate`}
+                  >
+                    {item.lastMessage.content}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="p-4 text-gray-400">No conversations found.</div>
+        )}
       </div>
 
       {/* Footer */}
@@ -127,7 +144,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
         <button
           ref={homeButtonRef}
           className="flex items-center gap-2 w-full p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-          onClick={() => (window.location.href = "/")} // Redirect to home
+          onClick={() => (window.location.href = "/")}
         >
           <FaHome className="text-xl" />
           <span>Home</span>

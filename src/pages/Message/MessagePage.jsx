@@ -174,7 +174,7 @@ const MessagePage = () => {
   // Edit a message
   const editMessage = async (messageId, content) => {
     try {
-      await axios.patch(
+      await axios.put(
         `${API_URL}/api/messages/${messageId}`,
         { userId, content },
         {
