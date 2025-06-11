@@ -18,12 +18,12 @@ import {
 } from "../../redux/APIs/slices/transactionSlice";
 
 const rechargePackages = [
-  { price: "10.000 VNĐ", amount: 10000, xu: 10 },
-  { price: "50.000 VNĐ", amount: 50000, xu: 60 },
-  { price: "100.000 VNĐ", amount: 100000, xu: 130 },
-  { price: "500.000 VNĐ", amount: 500000, xu: 700 },
-  { price: "1.000.000 VNĐ", amount: 1000000, xu: 1500 },
-  { price: "2.500.000 VNĐ", amount: 2500000, xu: 3000, bonus: true },
+  { price: "10.000 VNĐ", amount: 10000, xu: 10, bankCode:"NCB" },
+  { price: "50.000 VNĐ", amount: 50000, xu: 60 ,bankCode:"NCB"},
+  { price: "100.000 VNĐ", amount: 100000, xu: 130,bankCode:"NCB" },
+  { price: "500.000 VNĐ", amount: 500000, xu: 700 ,bankCode:"NCB"},
+  { price: "1.000.000 VNĐ", amount: 1000000, xu: 1500 ,bankCode:"NCB"},
+  { price: "2.500.000 VNĐ", amount: 2500000, xu: 3000, bonus: true,bankCode:"NCB" },
 ];
 
 const cardVariants = {
@@ -43,12 +43,12 @@ const BalancePage = () => {
 
   const handleRecharge = (amount) => {
     const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    console.log("Dispatching createPaymentUrl with:", { amount, orderId });
     dispatch(
       createPaymentUrl({
         amount,
         orderId,
         orderInfo: `Nạp ${amount.toLocaleString()} VNĐ vào số dư`,
+        bankCode:"NCB"
       })
     );
   };

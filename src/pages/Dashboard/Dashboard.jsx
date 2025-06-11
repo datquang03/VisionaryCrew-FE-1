@@ -1,7 +1,6 @@
 
 import React from 'react';
 import MainLayout from './layout/DashboardLayout';
-import DoctorBlogPage from './Blog/DoctorBlogPage';
 import { Outlet } from 'react-router-dom';
 
 const Dashboard = () => {
