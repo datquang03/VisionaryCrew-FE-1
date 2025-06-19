@@ -1,17 +1,18 @@
 /* eslint-disable no-unused-vars */
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useRef, useEffect, useState } from "react";
-import Navbar from "../../components/layout/Navbar/Navbar";
-import MobileNavbar from "../../components/layout/Navbar/MobileNavbar";
+import Navbar from "../../components/layout/Navbar/Navbar"; // Đảm bảo đường dẫn đúng
+import MobileNavbar from "../../components/layout/Navbar/MobileNavbar"; // Đảm bảo đường dẫn đúng
 import OptionSection from "./OptionSection";
 import AchievementSection from "./AchievementSection";
 import RatingReview from "./RatingReview";
 import TechStack from "./TechStack";
 import MobileIntroSection from "./MobileIntroSection";
 import IntroSection from "./IntroSection";
+import GetDoctor from "./DoctorInfo"
 
-// Animation variants for all sections, including Navbar
+// Animation variants for all sections
 const sectionVariants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: {
@@ -29,6 +30,7 @@ const Homepage = () => {
     navbar: false,
     intro: false,
     option: false,
+    doctor: false,
     achievement: false,
     rating: false,
     techStack: false,
@@ -36,6 +38,7 @@ const Homepage = () => {
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   const optionRef = useRef(null);
+  const doctorRef = useRef(null);
   const achievementRef = useRef(null);
   const ratingRef = useRef(null);
   const techStackRef = useRef(null);
@@ -45,12 +48,15 @@ const Homepage = () => {
     triggerOnce: false,
   });
 
-  const { ref: achievementInViewRef, inView: rawAchievementInView } = useInView(
-    {
-      threshold: 0.3,
-      triggerOnce: false,
-    }
-  );
+  const { ref: doctorInViewRef, inView: rawDoctorInView } = useInView({
+    threshold: 0.3,
+    triggerOnce: false,
+  });
+
+  const { ref: achievementInViewRef, inView: rawAchievementInView } = useInView({
+    threshold: 0.3,
+    triggerOnce: false,
+  });
 
   const { ref: ratingInViewRef, inView: rawRatingInView } = useInView({
     threshold: 0.3,
@@ -65,6 +71,11 @@ const Homepage = () => {
   const setOptionRefs = (node) => {
     optionRef.current = node;
     optionInViewRef(node);
+  };
+
+  const setDoctorRefs = (node) => {
+    doctorRef.current = node;
+    doctorInViewRef(node);
   };
 
   const setAchievementRefs = (node) => {
@@ -92,8 +103,7 @@ const Homepage = () => {
   }, []);
 
   useEffect(() => {
-    const timers = [];
-    timers.push(
+    const timers = [
       setTimeout(() => {
         setRevealedSections((prev) => ({ ...prev, navbar: true }));
       }, 0),
@@ -104,6 +114,9 @@ const Homepage = () => {
         setRevealedSections((prev) => ({ ...prev, option: true }));
       }, 600),
       setTimeout(() => {
+        setRevealedSections((prev) => ({ ...prev, doctor: true }));
+      }, 700),
+      setTimeout(() => {
         setRevealedSections((prev) => ({ ...prev, achievement: true }));
       }, 900),
       setTimeout(() => {
@@ -112,8 +125,8 @@ const Homepage = () => {
       setTimeout(() => {
         setRevealedSections((prev) => ({ ...prev, techStack: true }));
         setInitialLoadComplete(true);
-      }, 1500)
-    );
+      }, 1500),
+    ];
 
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -135,7 +148,7 @@ const Homepage = () => {
       ></div>
 
       {/* Navbar Section */}
-      <motion.div
+      <motion.div // Sửa từ motion.divider thành motion.div
         initial="hidden"
         animate={revealedSections.navbar ? "visible" : "hidden"}
         variants={sectionVariants}
@@ -180,6 +193,17 @@ const Homepage = () => {
         className="relative z-10"
       >
         <OptionSection setIsCardHovered={setIsCardHovered} />
+      </motion.div>
+
+      {/* Doctor Section */}
+      <motion.div
+        ref={setDoctorRefs}
+        initial="hidden"
+        animate={getSectionAnimation("doctor", rawDoctorInView)}
+        variants={sectionVariants}
+        className="relative z-10"
+      >
+        <GetDoctor setIsCardHovered={setIsCardHovered} />
       </motion.div>
 
       {/* Achievement Section */}

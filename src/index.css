@@ -21,3 +21,30 @@
   .animate-blink {
     animation: blinker 1s linear infinite;
   }
+
+  .doctor-swiper .swiper-button-next,
+.doctor-swiper .swiper-button-prev {
+  color: #3b82f6;
+}
+
+.doctor-swiper .swiper-pagination-bullet {
+  background-color: #3b82f6;
+}
+
+.doctor-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.doctor-card {
+  text-align: center;
+}
+
+.doctor-avatar {
+  transition: transform 0.3s ease;
+}
+
+.doctor-card:hover .doctor-avatar {
+  transform: scale(1.1);
+}

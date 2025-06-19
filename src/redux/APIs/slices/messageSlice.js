@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getRequest } from "../../../services/httpMethods";
 
@@ -8,7 +9,7 @@ export const getUserMessaged = createAsyncThunk(
       const response = await getRequest(`messages/history/${value}`);
       return response;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Error fetching doctors");
+      return rejectWithValue(error.response?.data || "Error fetching messages");
     }
   }
 );

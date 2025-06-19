@@ -1,0 +1,15 @@
+/* GetDoctor.css */
+.doctor-swiper .swiper-button-next,
+.doctor-swiper .swiper-button-prev {
+  color: #3b82f6;
+}
+
+.doctor-swiper .swiper-pagination-bullet {
+  background-color: #3b82f6;
+}
+
+.doctor-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

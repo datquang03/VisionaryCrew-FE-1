@@ -26,6 +26,7 @@ import AdminSettingPage from "./pages/Setting/AdminSettingPage";
 import Dashboard from "./pages/Dashboard/Doctor/Dashboard";
 import CallVideo from "./pages/Call-Video/CallVideo";
 import MessagePage from "./pages/Message/MessagePage";
+import ProfilePageById from "./pages/Profile/ProfilePageById";
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/profile/:id" element={<ProfilePageById />} />
         <Route element={<ProtectedRouter />}>
           <Route path="/settings" element={<SettingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
