@@ -1,10 +1,12 @@
-// src/pages/components/Sidebar.jsx
 import React, { useEffect, useRef } from "react";
 import { FaComments, FaSearch, FaCog, FaHome } from "react-icons/fa";
 import defaultImage from "../../../assets/defaultAvatar.png"; // Adjust path as needed
 import { gsap } from "gsap";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserMessaged } from "../../../redux/APIs/slices/messageSlice";
+import ThreeDButton from "../../../components/3D_Threejs/3DButton";
+import ShortLoading from "../../../components/Loading/ShortLoading";
+
 
 const Sidebar = ({ onSelectUser, selectedUser }) => {
   const dispatch = useDispatch();
@@ -63,7 +65,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
         ease: "power3.out",
       }
     );
-  }, []);
+  }, [userMessaged]); // Chỉ chạy animation khi userMessaged thay đổi
 
   return (
     <div className="w-1/4 h-screen flex flex-col">
@@ -89,7 +91,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
       {/* User List */}
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="p-4 text-gray-400">Loading...</div>
+          <ShortLoading text="Đang tải tin nhắn..." />
         ) : isSuccess && userMessaged?.length > 0 ? (
           userMessaged.map((item, index) => (
             <div
@@ -99,8 +101,7 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
                   ? "bg-gradient-to-r from-blue-900 to-blue-800"
                   : ""
               }`}
-              onClick={() => onSelectUser(item.user)
-           }
+              onClick={() => onSelectUser(item.user)}
               ref={(el) => (userItemsRef.current[index] = el)}
             >
               <img
@@ -141,14 +142,14 @@ const Sidebar = ({ onSelectUser, selectedUser }) => {
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900">
-        <button
+        <ThreeDButton
           ref={homeButtonRef}
-          className="flex items-center gap-2 w-full p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+          className="flex items-center gap-2 w-full p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 transition-all duration-100 transform hover:scale-105 hover:shadow-lg"
           onClick={() => (window.location.href = "/")}
         >
           <FaHome className="text-xl" />
-          <span>Home</span>
-        </button>
+          <span>Về trang chủ</span>
+        </ThreeDButton>
       </div>
     </div>
   );

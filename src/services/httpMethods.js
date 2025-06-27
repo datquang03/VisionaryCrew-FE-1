@@ -11,7 +11,7 @@ const getRequest = async (url) => {
   }
 };
 
-// [GET] -> params
+// [GET] -> params  
 const getRequestParams = async (url, params) => {
   try {
     const res = await axiosClient.get(`${url}`, { params: params });

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
@@ -7,45 +7,42 @@ import { useNavigate, useParams } from "react-router-dom";
 import userImage from "../../assets/defaultAvatar.png";
 import { getUserByID, setNull } from "../../redux/APIs/slices/userSlice"; 
 import { ColourfulText } from "../../components/3D_Threejs/ColorfulText";
+import { sendRequest, getUserRequests, clearState } from "../../redux/APIs/slices/doctorRequestSlice";
+import { toast } from "react-toastify"; // Thêm nếu dùng toast
 
-// Animation variants for the section
+// Animation variants
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 const detailVariants = {
   hidden: { opacity: 0, x: -20 },
-  visible: (i) => ({
-    opacity: 1,
-    x: 0,
-    transition: { delay: i * 0.2, duration: 0.5, ease: "easeOut" },
-  }),
+  visible: (i) => ({ opacity: 1, x: 0, transition: { delay: i * 0.2, duration: 0.5, ease: "easeOut" } }),
 };
 
 const avatarVariants = {
   hidden: { scale: 0, rotate: 0 },
-  visible: {
-    scale: 1,
-    rotate: 360,
-    transition: { duration: 0.8, ease: "easeOut" },
-  },
+  visible: { scale: 1, rotate: 360, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+const modalVariants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+  exit: { opacity: 0, scale: 0.5, transition: { duration: 0.2 } },
 };
 
 const ProfilePageById = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { user, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.userSlice
-  );
+  const { user, isLoading, isSuccess, isError, message } = useSelector((state) => state.userSlice);
+  const { requests, loading, error, success } = useSelector((state) => state.doctorRequest);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [messageInput, setMessageInput] = useState("");
 
   useEffect(() => {
-    console.log("User ID from params:", id); // Debug log
+    console.log("User ID from params:", id);
     if (id) {
       dispatch(getUserByID(id));
     }
@@ -54,12 +51,31 @@ const ProfilePageById = () => {
     };
   }, [dispatch, id]);
 
-  // Debug state
-  console.log("userSlice state:", { user, isLoading, isSuccess, isError, message });
+  useEffect(() => {
+    if (user && user._id) {
+      dispatch(getUserRequests());
+    }
+  }, [dispatch, user]);
 
-  const formattedDateOfBirth = user?.dateOfBirth
-    ? moment(user.dateOfBirth).format("DD-MM-YYYY")
-    : "N/A";
+  useEffect(() => {
+    if (error) toast.error(error);
+    if (success) toast.success(success);
+    return () => dispatch(clearState());
+  }, [error, success, dispatch]);
+
+  const formattedDateOfBirth = user?.dateOfBirth ? moment(user.dateOfBirth).format("DD-MM-YYYY") : "N/A";
+
+  const handleSendRequest = () => {
+    if (!messageInput.trim()) {
+      toast.error("Tin nhắn không được để trống.");
+      return;
+    }
+    dispatch(sendRequest({ doctor: id, message: messageInput }))
+      .then(() => {
+        setIsModalOpen(false);
+        setMessageInput("");
+      });
+  };
 
   return (
     <div className="min-h-screen max-h-screen custom-scrollbar bg-gradient-to-br from-gray-900 via-indigo-900 to-blue-900 p-6 flex items-center justify-center">
@@ -144,18 +160,6 @@ const ProfilePageById = () => {
             <div className="mt-6 grid gap-4">
               <motion.div
                 variants={detailVariants}
-                custom={2}
-                initial="hidden"
-                animate="visible"
-                className="flex items-center gap-3"
-              >
-                <span className="text-indigo-300 font-semibold">Số dư:</span>
-                <span className="bg-indigo-500/20 text-indigo-100 px-3 py-1 rounded-full text-sm">
-                  {user.balance || 0} VNĐ
-                </span>
-              </motion.div>
-              <motion.div
-                variants={detailVariants}
                 custom={3}
                 initial="hidden"
                 animate="visible"
@@ -208,10 +212,34 @@ const ProfilePageById = () => {
               </motion.div>
             </div>
 
+            {user.role === "user" && requests.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-xl font-semibold text-white mb-4">Yêu cầu của bạn</h3>
+                {requests.map((request, index) => (
+                  <motion.div
+                    key={request._id}
+                    variants={detailVariants}
+                    custom={7 + index}
+                    initial="hidden"
+                    animate="visible"
+                    className="mb-4 p-4 bg-indigo-500/20 text-indigo-100 rounded-lg border border-indigo-400/20"
+                  >
+                    <p><strong>Bác sĩ:</strong> {request.doctorId.username}</p>
+                    <p><strong>Trạng thái:</strong> {request.status}</p>
+                    <p><strong>Tin nhắn:</strong> {request.message}</p>
+                    {request.status === "rejected" && request.rejectionMessage && (
+                      <p><strong>Lý do từ chối:</strong> {request.rejectionMessage}</p>
+                    )}
+                    <p><strong>Ngày gửi:</strong> {moment(request.createdAt).format("DD-MM-YYYY HH:mm")}</p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
             <div className="mt-8 flex flex-col sm:flex-row sm:gap-4">
               <motion.button
                 variants={detailVariants}
-                custom={7}
+                custom={7 + (requests.length || 0)}
                 initial="hidden"
                 animate="visible"
                 onClick={() => navigate("/")}
@@ -219,17 +247,62 @@ const ProfilePageById = () => {
               >
                 Quay lại trang chủ
               </motion.button>
-              <motion.button
-                variants={detailVariants}
-                custom={8}
-                initial="hidden"
-                animate="visible"
-                onClick={() => navigate(`/update-profile/${id}`)}
-                className="w-full sm:w-auto bg-yellow-500 text-white font-medium px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 cursor-pointer"
-              >
-                Cập nhật thông tin
-              </motion.button>
+              {user.role === "doctor" && (
+                <motion.button
+                  variants={detailVariants}
+                  custom={8 + (requests.length || 0)}
+                  initial="hidden"
+                  animate="visible"
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full sm:w-auto bg-yellow-500 text-white font-medium px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 cursor-pointer mt-4 sm:mt-0"
+                >
+                  Liên hệ với bác sĩ
+                </motion.button>
+              )}
             </div>
+
+            {/* Modal */}
+            <AnimatePresence>
+              {isModalOpen && (
+                <motion.div
+                  variants={modalVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  <motion.div
+                    className="bg-white/10 backdrop-blur-lg p-6 rounded-lg border border-indigo-300/30 w-full max-w-md"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 className="text-xl font-semibold text-white mb-4">Gửi yêu cầu</h3>
+                    <textarea
+                      value={messageInput}
+                      onChange={(e) => setMessageInput(e.target.value)}
+                      placeholder="Nhập tin nhắn cho bác sĩ..."
+                      className="w-full p-3 mb-4 rounded-lg bg-white/10 text-white border border-indigo-300/30 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      rows="4"
+                    />
+                    <div className="flex justify-end gap-4">
+                      <button
+                        onClick={() => setIsModalOpen(false)}
+                        className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                      >
+                        Hủy
+                      </button>
+                      <button
+                        onClick={handleSendRequest}
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                        disabled={loading}
+                      >
+                        {loading ? "Đang gửi..." : "Gửi"}
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div

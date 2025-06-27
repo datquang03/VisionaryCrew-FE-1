@@ -48,3 +48,10 @@
 .doctor-card:hover .doctor-avatar {
   transform: scale(1.1);
 }
+.custom-scrollbar-hidden {
+  -ms-overflow-style: none; /* IE và Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.custom-scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

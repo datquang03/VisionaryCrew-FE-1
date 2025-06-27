@@ -17,16 +17,7 @@ const ShortLoading = ({ text }) => {
     }),
   };
 
-  const spinnerVariants = {
-    animate: {
-      rotate: 360,
-      transition: {
-        duration: 1,
-        repeat: Infinity,
-        ease: "linear",
-      },
-    },
-  };
+
 
   return (
     <div className="flex items-center gap-1 text-white">
@@ -47,12 +38,7 @@ const ShortLoading = ({ text }) => {
           </motion.span>
         ))}
       </div>
-      {/* Spinning circle */}
-      <motion.div
-        variants={spinnerVariants}
-        animate="animate"
-        className="w-4 h-4 border-2 border-t-green-500 border-l-green-500 border-r-transparent border-b-transparent rounded-full"
-      />
+
     </div>
   );
 };

@@ -27,6 +27,9 @@ import Dashboard from "./pages/Dashboard/Doctor/Dashboard";
 import CallVideo from "./pages/Call-Video/CallVideo";
 import MessagePage from "./pages/Message/MessagePage";
 import ProfilePageById from "./pages/Profile/ProfilePageById";
+import MedicinePage from "./pages/Medicine/MedicinePage";
+import MedicineDetailPage from "./pages/Medicine/MedicineDetailPage";
+import BookingPage from "./pages/Booking/BookingPage";
 
 const App = () => {
   return (
@@ -44,6 +47,9 @@ const App = () => {
         <Route path="/blog/:id" element={<BlogDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile/:id" element={<ProfilePageById />} />
+        <Route path="/medicine" element={<MedicinePage />} />
+        <Route path="/medicine/:id" element={<MedicineDetailPage />} />
+        <Route path="/booking" element={<BookingPage />} />
         <Route element={<ProtectedRouter />}>
           <Route path="/settings" element={<SettingPage />} />
           <Route path="/profile" element={<ProfilePage />} />

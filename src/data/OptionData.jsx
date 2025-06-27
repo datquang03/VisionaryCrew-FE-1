@@ -18,7 +18,7 @@ const optionData = [
     id: 2,
     name: "Tìm nơi khám gần bạn",
     description: "Đặt lịch khám dễ dàng",
-    navigation: "/find",
+    navigation: "/booking",
     icon: (
       <FaHospitalAlt className="text-8xl text-green-600 absolute bottom-4 right-4" />
     ),
@@ -58,7 +58,7 @@ const optionData = [
     id: 6,
     name: "Thông tin về thuốc và sức khỏe",
     description: "Thư viện về các loại thực phẩm, thuốc và sức khỏe",
-    navigation: "/medicines",
+    navigation: "/medicine",
     icon: (
       <FaPills className="text-8xl text-red-600 absolute bottom-4 right-4" />
     ),
